@@ -1,0 +1,75 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  
+  .logo {
+    margin: 0;
+  }
+  
+  .nav-links .btn {
+    margin-left: 10px;
+  }
+  
+  /* Hero */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem;
+    background: #000101;
+  }
+  
+  .search-box {
+    margin-top: 1.5rem;
+  }
+  
+  .search-box input {
+    margin: 5px;
+    padding: 10px;
+  }
+  
+  /* Features */
+  .features {
+    display: flex;
+    justify-content: space-around;
+    padding: 2rem;
+  }
+  
+  .feature-card {
+    width: 25%;
+    padding: 1rem;
+    background: #f1f5f9;
+    border-radius: 10px;
+  }
+  
+  /* Rides */
+  .rides {
+    padding: 2rem;
+  }
+  
+  .ride-card {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    margin: 10px 0;
+    border-radius: 8px;
+  }
+  
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 1rem;
+    background: #0f172a;
+    color: white;
+  }
+  
+  /* Buttons */
+  .btn {
+    padding: 8px 12px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .primary {
+    background: #2563eb;
+    color: white;
+  }
