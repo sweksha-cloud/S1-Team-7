@@ -3,6 +3,14 @@ body {
     font-family: Arial, sans-serif;
   }
   
+  /* Navbar */
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    background: #0f172a;
+    color: white;
+  }
   
   .logo {
     margin: 0;

@@ -5,6 +5,15 @@ export default function Home() {
   return (
     <div className="home">
 
+      {/* Navbar */}
+        <nav className="navbar">
+        <h1 className="logo">UniRide</h1>
+        <div className="nav-links">
+          <button className="btn">Login</button>
+          <button className="btn primary">Sign Up</button>
+        </div>
+      </nav>
+
 
       {/* Hero Section */}
       <section className="hero">
