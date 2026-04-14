@@ -1,11 +1,11 @@
-.signup-page {
+.login-page {
   min-height: 100vh;
   background: #f8fafc;
   display: flex;
   flex-direction: column;
 }
 
-.signup-shell {
+.login-shell {
   width: min(560px, 100%);
   background: transparent;
   border: none;
@@ -14,12 +14,12 @@
   box-shadow: none;
 }
 
-.signup-header {
+.login-header {
   text-align: left;
   margin-bottom: 24px;
 }
 
-.signup-hero {
+.login-hero {
   padding: 2rem 1rem;
   display: grid;
   place-items: center;
@@ -27,41 +27,23 @@
   flex: 1;
 }
 
-.signup-header h2 {
+.login-header h2 {
   margin: 0 0 8px;
   color: #0f172a;
 }
 
-.signup-subtitle {
-  margin: 0;
-  color: #475569;
-}
-
-.signup-form {
+.login-form {
   display: grid;
   gap: 10px;
   text-align: left;
 }
 
-.name-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.name-field {
-  display: grid;
-  gap: 10px;
-}
-
-.signup-form label,
-.role-selector legend {
+.login-form label {
   font-weight: 600;
   color: #0f172a;
 }
 
-.signup-form input,
-.signup-form select {
+.login-form input {
   width: 100%;
   box-sizing: border-box;
   border: 1px solid #ccc;
@@ -73,54 +55,13 @@
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.signup-form input:focus,
-.signup-form select:focus {
+.login-form input:focus {
   outline: none;
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
-.role-selector {
-  margin: 4px 0;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 12px;
-  display: flex;
-  gap: 18px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.role-selector label {
-  font-weight: 500;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.role-selector input[type="radio"] {
-  width: auto;
-  accent-color: #2563eb;
-}
-
-.role-selector input[type="checkbox"] {
-  width: auto;
-  accent-color: #2563eb;
-}
-
-.password-strength {
-  margin: -2px 0 0;
-  font-size: 0.9rem;
-  color: #0369a1;
-}
-
-.field-error {
-  margin: -4px 0 2px;
-  color: #b91c1c;
-  font-size: 0.9rem;
-}
-
-.signup-submit {
+.login-submit {
   margin-top: 8px;
   padding: 12px 16px;
   border: none;
@@ -133,12 +74,12 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.signup-submit:hover {
+.login-submit:hover {
   transform: translateY(-1px);
   box-shadow: 0 8px 14px rgba(37, 99, 235, 0.25);
 }
 
-.signup-success {
+.login-success {
   margin: 8px 0 0;
   border: 1px solid #86efac;
   background: #f0fdf4;
@@ -149,18 +90,8 @@
 }
 
 @media (max-width: 640px) {
-  .signup-shell {
+  .login-shell {
     padding: 20px;
     border-radius: 8px;
-  }
-
-  .name-row {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  .role-selector {
-    gap: 12px;
-    align-items: flex-start;
   }
 }

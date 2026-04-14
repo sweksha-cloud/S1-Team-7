@@ -2,6 +2,12 @@ body {
     margin: 0;
     font-family: Arial, sans-serif;
   }
+
+  .home {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
   
   /* Navbar */
   .navbar {
@@ -69,6 +75,7 @@ body {
     padding: 1rem;
     background: #0f172a;
     color: white;
+    margin-top: auto;
   }
   
   /* Buttons */
