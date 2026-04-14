@@ -35,7 +35,7 @@ export default function Home({ onLoginClick, onSignupClick }) {
         <div className="feature-card">
           <div className="icon">💰</div>
           <h3>Save Money</h3>
-          <p>Split gas and parking costs with fellow students heading your way to campus.</p>
+          <p>Split gas and parking costs with fellow students heading your way.</p>
         </div>
         <div className="feature-card">
           <div className="icon">🌎</div>
