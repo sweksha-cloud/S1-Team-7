@@ -3,77 +3,50 @@ import "../css/Home.css";
 
 export default function Home({ onLoginClick, onSignupClick }) {
   return (
-    <div className="home">
-
-      {/* Navbar */}
-        <nav className="navbar">
+    <div className="home-container">
+      <nav className="navbar">
         <h1 className="logo">UniRide</h1>
         <div className="nav-links">
-          <button className="btn" onClick={onLoginClick}>Login</button>
-          <button className="btn primary" onClick={onSignupClick}>Sign Up</button>
+          <button className="nav-btn-secondary" onClick={onLoginClick}>Log In</button>
+          <button className="nav-btn-primary" onClick={onSignupClick}>Sign Up</button>
         </div>
       </nav>
 
+      <main className="hero-section">
+        <div className="hero-content">
+          <h1>Commute Smarter to <span className="highlight">SJSU</span></h1>
+          <p>
+            The safe, reliable way for Spartans to share rides, save money, and 
+            reduce campus traffic.
+          </p>
+          <div className="hero-btns">
+            <button className="main-btn-primary" onClick={onSignupClick}>Get Started</button>
+            <button className="main-btn-outline" onClick={onLoginClick}>View Rides</button>
+          </div>
+        </div>
+      </main>
 
-      {/* Hero Section */}
-      <section className="hero">
-        <h2 className="motto">Find Your Ride. Save Money. Ride Safe.</h2>
-        <p className="motto">
-          Connect with verified SJSU students for safe and affordable rides.
-        </p>
-
-        <div className="search-box">
-          <input type="text" placeholder="From (Pickup location)" />
-          <input type="text" placeholder="To (Destination)" />
-          <input type="datetime-local" />
-          <button className="btn primary">Search Rides</button>
+      <section className="features-grid">
+        <div className="feature-card">
+          <div className="icon">🛡️</div>
+          <h3>Verified Students</h3>
+          <p>Only users with @sjsu.edu emails can join our network.</p>
+        </div>
+        <div className="feature-card">
+          <div className="icon">💰</div>
+          <h3>Save Money</h3>
+          <p>Split gas and parking costs with fellow students heading your way.</p>
+        </div>
+        <div className="feature-card">
+          <div className="icon">🌎</div>
+          <h3>Eco-Friendly</h3>
+          <p>Reduce the number of cars in the North and South garages.</p>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="features">
-        <div className="feature-card">
-          <h3>🔒 Student Verified</h3>
-          <p>Only SJSU students can join for a safer community.</p>
-        </div>
-
-        <div className="feature-card">
-          <h3>💸 Save Money</h3>
-          <p>Split costs and reduce expensive commuting.</p>
-        </div>
-
-        <div className="feature-card">
-          <h3>🚗 Easy Booking</h3>
-          <p>Search, filter, and book rides in seconds.</p>
-        </div>
-      </section>
-
-      {/* Example Rides Section */}
-      <section className="rides">
-        <h2>Available Rides</h2>
-
-        <div className="ride-card">
-          <p><strong>Driver:</strong> Sweksha</p>
-          <p><strong>From:</strong> SJSU</p>
-          <p><strong>To:</strong> San Francisco</p>
-          <p><strong>Seats:</strong> 2 available</p>
-          <button className="btn">View</button>
-        </div>
-
-        <div className="ride-card">
-          <p><strong>Driver:</strong> Brian</p>
-          <p><strong>From:</strong> Downtown SJ</p>
-          <p><strong>To:</strong> Cupertino</p>
-          <p><strong>Seats:</strong> 3 available</p>
-          <button className="btn">View</button>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="footer">
-        <p>© 2026 UniRide | SJSU Carpool System</p>
+      <footer className="home-footer">
+        <p>© 2026 UniRide | Built for Spartans</p>
       </footer>
-
     </div>
   );
 }

@@ -148,6 +148,23 @@
   font-weight: 600;
 }
 
+.nav-btn-secondary {
+  background: transparent;
+  border: none;
+  color: #636e72;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.nav-btn-secondary:hover {
+  color: #0055A2; 
+}
+
 @media (max-width: 640px) {
   .signup-shell {
     padding: 20px;

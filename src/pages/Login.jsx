@@ -86,17 +86,22 @@ export default function Login({ onHomeClick, onLoginSuccess }) {
   return (
     <div className="login-page">
       <nav className="navbar">
-        <h1
-          className="logo"
-          onClick={onHomeClick}
-          onKeyDown={handleLogoKeyDown}
-          role="button"
-          tabIndex={0}
-        >
-          UniRide
-        </h1>
-        <div className="nav-links" />
-      </nav>
+      <h1
+        className="logo"
+        onClick={onHomeClick}
+        onKeyDown={handleLogoKeyDown}
+        role="button"
+        tabIndex={0}
+        style={{ cursor: "pointer" }}
+      >
+        UniRide
+      </h1>
+      <div className="nav-links">
+        <button className="nav-btn-secondary" onClick={onHomeClick}>
+          ← Back to Home
+        </button>
+      </div>
+    </nav>
 
       <section className="login-hero">
         <div className="login-shell">
