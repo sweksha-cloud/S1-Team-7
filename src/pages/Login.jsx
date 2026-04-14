@@ -9,7 +9,7 @@ const initialForm = {
   password: "",
 };
 
-export default function Login({ onHomeClick }) {
+export default function Login({ onHomeClick, onLoginSuccess}) {
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
   const [statusMessage, setStatusMessage] = useState("");
@@ -72,9 +72,17 @@ export default function Login({ onHomeClick }) {
       return;
     }
 
+    localStorage.setItem("uniride_session", JSON.stringify(matchedUser));
     setForm(initialForm);
     setErrors({});
     setStatusMessage(`Welcome back, ${matchedUser.firstName || "student"}.`);
+
+    if (onLoginSuccess) {
+      setTimeout(() => {
+        onLoginSuccess();
+      }, 1000);
+    }
+    
   }
 
   return (
