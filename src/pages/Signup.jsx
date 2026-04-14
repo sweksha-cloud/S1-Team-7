@@ -142,9 +142,6 @@ export default function Signup({ onHomeClick }) {
 				<div className="signup-shell">
 					<header className="signup-header">
 						<h2>Create Your UniRide Account</h2>
-						<p className="signup-subtitle">
-							Use your SJSU details and choose one or more rider roles.
-						</p>
 					</header>
 
 					<form className="signup-form" onSubmit={handleSubmit} noValidate>
