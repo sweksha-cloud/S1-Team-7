@@ -17,8 +17,8 @@ export default function Home({ onLoginClick, onSignupClick }) {
 
       {/* Hero Section */}
       <section className="hero">
-        <h2>Find Your Ride. Save Money. Ride Safe.</h2>
-        <p>
+        <h2 className="motto">Find Your Ride. Save Money. Ride Safe.</h2>
+        <p className="motto">
           Connect with verified SJSU students for safe and affordable rides.
         </p>
 

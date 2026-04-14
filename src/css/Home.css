@@ -33,6 +33,10 @@ body {
     padding: 3rem 1rem;
     background: #000101;
   }
+
+  .motto {
+    color: whitesmoke;
+  }
   
   .search-box {
     margin-top: 1.5rem;
