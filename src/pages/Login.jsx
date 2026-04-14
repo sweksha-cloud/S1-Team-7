@@ -9,7 +9,7 @@ const initialForm = {
   password: "",
 };
 
-export default function Login({ onHomeClick, onLoginSuccess}) {
+export default function Login({ onHomeClick, onLoginSuccess }) {
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
   const [statusMessage, setStatusMessage] = useState("");
@@ -23,7 +23,6 @@ export default function Login({ onHomeClick, onLoginSuccess}) {
 
   function handleChange(event) {
     const { name, value } = event.target;
-
     setForm((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
     setStatusMessage("");
@@ -79,10 +78,9 @@ export default function Login({ onHomeClick, onLoginSuccess}) {
 
     if (onLoginSuccess) {
       setTimeout(() => {
-        onLoginSuccess();
+        onLoginSuccess(matchedUser.role);
       }, 1000);
     }
-    
   }
 
   return (
