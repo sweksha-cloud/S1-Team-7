@@ -17,6 +17,13 @@ export default function Signup({ onHomeClick }) {
 	const [errors, setErrors] = useState({});
 	const [successMessage, setSuccessMessage] = useState("");
 
+	function handleLogoKeyDown(event) {
+		if (event.key === "Enter" || event.key === " ") {
+			event.preventDefault();
+			onHomeClick();
+		}
+	}
+
 	const passwordStrength = useMemo(() => {
 		const length = form.password.length;
 
@@ -130,12 +137,16 @@ export default function Signup({ onHomeClick }) {
 	return (
 		<div className="signup-page">
 			<nav className="navbar">
-				<h1 className="logo">UniRide</h1>
-				<div className="nav-links">
-					<button className="btn" onClick={onHomeClick} type="button">
-						Home
-					</button>
-				</div>
+				<h1
+					className="logo"
+					onClick={onHomeClick}
+					onKeyDown={handleLogoKeyDown}
+					role="button"
+					tabIndex={0}
+				>
+					UniRide
+				</h1>
+				<div className="nav-links" />
 			</nav>
 
 			<section className="signup-hero">
