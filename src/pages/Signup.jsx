@@ -5,6 +5,8 @@ import "../css/Signup.css";
 const STORAGE_KEY = "unirideUsers";
 
 const initialForm = {
+	firstName: "",
+	lastName: "",
 	email: "",
 	sjsuId: "",
 	gender: "",
@@ -67,6 +69,16 @@ export default function Signup({ onHomeClick }) {
 	function validate(currentForm) {
 		const nextErrors = {};
 		const normalizedEmail = currentForm.email.trim().toLowerCase();
+		const normalizedFirstName = currentForm.firstName.trim();
+		const normalizedLastName = currentForm.lastName.trim();
+
+		if (!normalizedFirstName) {
+			nextErrors.firstName = "First name is required.";
+		}
+
+		if (!normalizedLastName) {
+			nextErrors.lastName = "Last name is required.";
+		}
 
 		if (!normalizedEmail) {
 			nextErrors.email = "Email is required.";
@@ -118,6 +130,8 @@ export default function Signup({ onHomeClick }) {
 
 		const normalizedEmail = form.email.trim().toLowerCase();
 		const newUser = {
+			firstName: form.firstName.trim(),
+			lastName: form.lastName.trim(),
 			email: normalizedEmail,
 			sjsuId: form.sjsuId.trim(),
 			gender: form.gender,
@@ -156,6 +170,34 @@ export default function Signup({ onHomeClick }) {
 					</header>
 
 					<form className="signup-form" onSubmit={handleSubmit} noValidate>
+					<div className="name-row">
+						<div className="name-field">
+							<label htmlFor="firstName">First name</label>
+							<input
+								id="firstName"
+								name="firstName"
+								type="text"
+								value={form.firstName}
+								onChange={handleChange}
+								placeholder="First name"
+							/>
+							{errors.firstName && <p className="field-error">{errors.firstName}</p>}
+						</div>
+
+						<div className="name-field">
+							<label htmlFor="lastName">Last name</label>
+							<input
+								id="lastName"
+								name="lastName"
+								type="text"
+								value={form.lastName}
+								onChange={handleChange}
+								placeholder="Last name"
+							/>
+							{errors.lastName && <p className="field-error">{errors.lastName}</p>}
+						</div>
+					</div>
+
 					<label htmlFor="email">Email</label>
 					<input
 						id="email"
@@ -188,8 +230,8 @@ export default function Signup({ onHomeClick }) {
 						onChange={handleChange}
 					>
 						<option value="">Select gender</option>
-						<option value="female">Female</option>
 						<option value="male">Male</option>
+                        <option value="female">Female</option>
 						<option value="non-binary">Non-binary</option>
 						<option value="prefer-not-to-say">Prefer not to say</option>
 					</select>

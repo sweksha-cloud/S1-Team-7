@@ -5,11 +5,11 @@
 
 .signup-shell {
   width: min(560px, 100%);
-  background: #ffffff;
-  border: 1px solid #ccc;
-  border-radius: 10px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
   padding: 36px;
-  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+  box-shadow: none;
 }
 
 .signup-header {
@@ -38,6 +38,17 @@
   display: grid;
   gap: 10px;
   text-align: left;
+}
+
+.name-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.name-field {
+  display: grid;
+  gap: 10px;
 }
 
 .signup-form label,
@@ -138,6 +149,11 @@
   .signup-shell {
     padding: 20px;
     border-radius: 8px;
+  }
+
+  .name-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
 
   .role-selector {
