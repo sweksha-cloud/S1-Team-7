@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function UserDashboard() {
+export default function UserDashboard({ onDeleteAccount }) {
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
@@ -13,7 +13,6 @@ export default function UserDashboard() {
       boxSizing: "border-box"
     }}>
       
-      {}
       <div style={{ 
         display: "grid", 
         gridTemplateColumns: "1fr 1fr", 
@@ -30,7 +29,6 @@ export default function UserDashboard() {
         </button>
       </div>
 
-      {}
       <div className="login-shell" style={{ width: "100%", maxWidth: "500px", textAlign: "left" }}>
         <h3 style={{ textAlign: "center", marginBottom: "20px" }}>Available Rides</h3>
         
@@ -44,6 +42,24 @@ export default function UserDashboard() {
 
         <div style={{ textAlign: "center", color: "#666", padding: "20px" }}>
           <p>No active rides found for your search.</p>
+        </div>
+
+        <div style={{ marginTop: "40px", borderTop: "1px solid #eee", paddingTop: "20px", textAlign: "center" }}>
+          <button 
+            onClick={onDeleteAccount}
+            style={{
+              backgroundColor: "transparent",
+              color: "#e74c3c",
+              border: "1px solid #e74c3c",
+              padding: "8px 15px",
+              borderRadius: "5px",
+              cursor: "pointer",
+              fontSize: "0.9rem",
+              fontWeight: "600"
+            }}
+          >
+            Delete Account
+          </button>
         </div>
       </div>
     </div>

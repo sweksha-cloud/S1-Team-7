@@ -21,6 +21,20 @@ function App() {
     }
   };
 
+  const handleDeleteAccount = () => {
+    const session = JSON.parse(localStorage.getItem("uniride_session"));
+    if (!session) return;
+
+    if (window.confirm("Are you sure you want to delete your account?")) {
+      const allUsers = JSON.parse(localStorage.getItem("unirideUsers") || "[]");
+      const updatedUsers = allUsers.filter(user => user.email !== session.email);
+      
+      localStorage.setItem("unirideUsers", JSON.stringify(updatedUsers));
+      localStorage.removeItem("uniride_session");
+      setActivePage("home");
+    }
+  };
+
   if (activePage === "login") {
     return (
       <Login 
@@ -44,7 +58,7 @@ function App() {
           </div>
         </nav>
         <div style={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "flex-start", paddingTop: "50px" }}>
-          <PassengerDashboard />
+          <PassengerDashboard onDeleteAccount={handleDeleteAccount} />
         </div>
       </div>
     );
@@ -68,7 +82,7 @@ function App() {
           alignItems: "flex-start", 
           paddingTop: "50px" 
         }}>
-          <DriverDashboard />
+          <DriverDashboard onDeleteAccount={handleDeleteAccount} />
         </div>
       </div>
     );

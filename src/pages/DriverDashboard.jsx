@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function DriverDashboard() {
+export default function DriverDashboard({ onDeleteAccount }) {
   const [currentUser] = useState(() => {
     const session = localStorage.getItem("uniride_session");
     return session ? JSON.parse(session) : null;
@@ -28,7 +28,6 @@ export default function DriverDashboard() {
       boxSizing: "border-box"
     }}>
       
-      {}
       <div style={{ 
         display: "grid", 
         gridTemplateColumns: "1fr 1fr", 
@@ -51,7 +50,6 @@ export default function DriverDashboard() {
         </button>
       </div>
 
-      {}
       <div className="login-shell" style={{ 
         width: "100%", 
         maxWidth: "500px", 
@@ -90,6 +88,24 @@ export default function DriverDashboard() {
         >
           Add New Vehicle
         </button>
+
+        <div style={{ marginTop: "40px", borderTop: "1px solid #eee", paddingTop: "20px", textAlign: "center" }}>
+          <button 
+            onClick={onDeleteAccount}
+            style={{
+              backgroundColor: "transparent",
+              color: "#e74c3c",
+              border: "1px solid #e74c3c",
+              padding: "8px 15px",
+              borderRadius: "5px",
+              cursor: "pointer",
+              fontSize: "0.9rem",
+              fontWeight: "600"
+            }}
+          >
+            Delete Account
+          </button>
+        </div>
       </div>
     </div>
   );
