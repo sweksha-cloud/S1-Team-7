@@ -1,7 +1,7 @@
 import React from "react";
 import "../css/Home.css";
 
-export default function Home() {
+export default function Home({ onLoginClick, onSignupClick }) {
   return (
     <div className="home">
 
@@ -9,8 +9,8 @@ export default function Home() {
         <nav className="navbar">
         <h1 className="logo">UniRide</h1>
         <div className="nav-links">
-          <button className="btn">Login</button>
-          <button className="btn primary">Sign Up</button>
+          <button className="btn" onClick={onLoginClick}>Login</button>
+          <button className="btn primary" onClick={onSignupClick}>Sign Up</button>
         </div>
       </nav>
 
