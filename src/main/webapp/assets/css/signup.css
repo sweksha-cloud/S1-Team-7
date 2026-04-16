@@ -1,11 +1,11 @@
-.login-page {
+.signup-page {
   min-height: 100vh;
   background: #f8fafc;
   display: flex;
   flex-direction: column;
 }
 
-.login-shell {
+.signup-shell {
   width: min(560px, 100%);
   background: transparent;
   border: none;
@@ -14,12 +14,12 @@
   box-shadow: none;
 }
 
-.login-header {
+.signup-header {
   text-align: left;
   margin-bottom: 24px;
 }
 
-.login-hero {
+.signup-hero {
   padding: 2rem 1rem;
   display: grid;
   place-items: center;
@@ -27,23 +27,36 @@
   flex: 1;
 }
 
-.login-header h2 {
+.signup-header h2 {
   margin: 0 0 8px;
   color: #0f172a;
 }
 
-.login-form {
+.signup-form {
   display: grid;
   gap: 10px;
   text-align: left;
 }
 
-.login-form label {
+.name-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.name-field {
+  display: grid;
+  gap: 10px;
+}
+
+.signup-form label,
+.role-selector legend {
   font-weight: 600;
   color: #0f172a;
 }
 
-.login-form input {
+.signup-form input,
+.signup-form select {
   width: 100%;
   box-sizing: border-box;
   border: 1px solid #ccc;
@@ -55,13 +68,43 @@
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.login-form input:focus {
+.signup-form input:focus,
+.signup-form select:focus {
   outline: none;
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
-.login-submit {
+.role-selector {
+  margin: 4px 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.role-selector label {
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.role-selector input[type="checkbox"] {
+  width: auto;
+  accent-color: #2563eb;
+}
+
+.password-strength {
+  margin: -2px 0 0;
+  font-size: 0.9rem;
+  color: #0369a1;
+}
+
+.signup-submit {
   margin-top: 8px;
   padding: 12px 16px;
   border: none;
@@ -74,12 +117,12 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.login-submit:hover {
+.signup-submit:hover {
   transform: translateY(-1px);
   box-shadow: 0 8px 14px rgba(37, 99, 235, 0.25);
 }
 
-.login-success {
+.signup-success {
   margin: 8px 0 0;
   border: 1px solid #86efac;
   background: #f0fdf4;
@@ -103,13 +146,22 @@
 }
 
 .nav-btn-secondary:hover {
-  color: #0055A2; 
+  color: #0055a2;
 }
 
 @media (max-width: 640px) {
-  .login-shell {
+  .signup-shell {
     padding: 20px;
     border-radius: 8px;
   }
-}
 
+  .name-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .role-selector {
+    gap: 12px;
+    align-items: flex-start;
+  }
+}
