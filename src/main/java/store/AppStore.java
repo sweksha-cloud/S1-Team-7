@@ -1,7 +1,7 @@
-package com.uniride.store;
+package store;
 
-import com.uniride.model.User;
-import com.uniride.model.Vehicle;
+import model.User;
+import model.Vehicle;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.uniride.model.User" %>
-<%@ page import="com.uniride.model.Vehicle" %>
+<%@ page import="model.User" %>
+<%@ page import="model.Vehicle" %>
 <%
 String cp = request.getContextPath();
 User currentUser = (User) session.getAttribute("currentUser");
@@ -19,64 +19,62 @@ if (vehicles == null) {
   <link rel="stylesheet" href="<%= cp %>/assets/css/common.css" />
   <link rel="stylesheet" href="<%= cp %>/assets/css/home.css" />
   <link rel="stylesheet" href="<%= cp %>/assets/css/login.css" />
+  <link rel="stylesheet" href="<%= cp %>/assets/css/dashboard.css" />
 </head>
 <body>
-  <div class="login-page" style="min-height: 100vh; display: flex; flex-direction: column;">
+  <div class="login-page dashboard-page">
     <nav class="navbar">
-      <h1 class="logo"><a href="<%= cp %>/home" style="color: inherit; text-decoration: none;">UniRide</a></h1>
-      <div class="nav-links" style="gap: 12px;">
-        <span style="color: #9aa4b2; font-size: 0.9rem;">Welcome <%= currentUser != null ? currentUser.getFirstName() : "Driver" %></span>
-        <form method="post" action="<%= cp %>/logout" style="margin: 0;">
-          <button type="submit" class="login-submit" style="margin: 0; padding: 10px 14px;">Sign Out</button>
+      <h1 class="logo"><a href="<%= cp %>/home">UniRide</a></h1>
+      <div class="nav-links dashboard-nav-links">
+        <span class="dashboard-welcome">Welcome <%= currentUser != null ? currentUser.getFirstName() : "Driver" %></span>
+        <form method="post" action="<%= cp %>/logout" class="dashboard-inline-form">
+          <button type="submit" class="login-submit dashboard-signout">Sign Out</button>
         </form>
       </div>
     </nav>
 
-    <div style="flex: 1; display: flex; justify-content: center; align-items: flex-start; padding-top: 50px;">
-      <div style="display: flex; flex-direction: column; align-items: center; width: 100%; padding: 20px; box-sizing: border-box;">
+    <div class="dashboard-main">
+      <div class="dashboard-main-inner">
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; max-width: 500px; margin-bottom: 30px;">
-          <button class="login-submit" style="background-color: #2ecc71; margin: 0;" type="button">Create a Ride</button>
-          <button class="login-submit" style="background-color: #3498db; margin: 0;" type="button">Passenger Requests</button>
-          <button class="login-submit" style="background-color: #9b59b6; margin: 0;" type="button">My Earnings</button>
-          <button class="login-submit" style="background-color: #95a5a6; margin: 0;" type="button">Settings</button>
+        <div class="dashboard-actions">
+          <button class="login-submit action-create" type="button">Create a Ride</button>
+          <button class="login-submit action-requests" type="button">Passenger Requests</button>
+          <button class="login-submit action-earnings" type="button">My Earnings</button>
+          <button class="login-submit action-settings" type="button">Settings</button>
         </div>
 
-        <div class="login-shell" style="width: 100%; max-width: 500px; text-align: left; margin: 0 auto;">
-          <h3 style="text-align: center; margin-bottom: 20px;">My Registered Vehicles</h3>
+        <div class="login-shell dashboard-card">
+          <h3>My Registered Vehicles</h3>
 
           <% if (vehicles.isEmpty()) { %>
-            <p style="text-align: center; color: #666;">No vehicles added yet.</p>
+            <p class="dashboard-empty">No vehicles added yet.</p>
           <% } else { %>
             <% for (Vehicle vehicle : vehicles) { %>
-              <div style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #eee; align-items: center;">
+              <div class="vehicle-row">
                 <div>
                   <strong><%= vehicle.getColor() %> <%= vehicle.getMake() %></strong><br />
-                  <small style="color: #888;">Plate: <%= vehicle.getPlate() %></small>
+                  <small class="vehicle-plate">Plate: <%= vehicle.getPlate() %></small>
                 </div>
-                <form method="post" action="<%= cp %>/dashboard/driver" style="margin: 0;">
+                <form method="post" action="<%= cp %>/dashboard/driver" class="dashboard-inline-form">
                   <input type="hidden" name="action" value="deleteVehicle" />
                   <input type="hidden" name="vehicleId" value="<%= vehicle.getId() %>" />
-                  <button type="submit" style="background: none; border: none; color: #e74c3c; cursor: pointer;">Delete</button>
+                  <button type="submit" class="vehicle-delete">Delete</button>
                 </form>
               </div>
             <% } %>
           <% } %>
 
-          <form method="post" action="<%= cp %>/dashboard/driver" style="margin-top: 20px; display: grid; gap: 10px;">
+          <form method="post" action="<%= cp %>/dashboard/driver" class="dashboard-form-grid">
             <input type="hidden" name="action" value="addVehicle" />
             <input type="text" name="make" placeholder="Vehicle make (e.g. Toyota)" required />
             <input type="text" name="color" placeholder="Vehicle color" required />
             <input type="text" name="plate" placeholder="License plate" required />
-            <button class="login-submit" style="margin: 0; background: #34495e; width: 100%;" type="submit">Add New Vehicle</button>
+            <button class="login-submit dashboard-add-vehicle" type="submit">Add New Vehicle</button>
           </form>
 
-          <div style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px; text-align: center;">
+          <div class="dashboard-danger-wrap">
             <form method="post" action="<%= cp %>/delete-account" onsubmit="return confirm('Are you sure you want to delete your account?');">
-              <button
-                type="submit"
-                style="background-color: transparent; color: #e74c3c; border: 1px solid #e74c3c; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 0.9rem; font-weight: 600;"
-              >
+              <button type="submit" class="dashboard-danger-btn">
                 Delete Account
               </button>
             </form>

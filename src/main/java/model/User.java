@@ -1,4 +1,4 @@
-package com.uniride.model;
+package model;
 
 import java.time.Instant;
 import java.util.Collections;
