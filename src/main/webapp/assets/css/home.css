@@ -1,15 +1,15 @@
 :root {
   --bg-dark: #050a16;
   --bg-card: #0e1629;
-  --sjsu-gold: #E5A823;
+  --sjsu-gold: #e5a823;
   --text-main: #ffffff;
   --text-dim: #a1a7b3;
   --border-color: #202b40;
-  --sjsu-blue: #0055A2;
+  --sjsu-blue: #0055a2;
 }
 
 .home-container {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: "Inter", system-ui, sans-serif;
   background-color: var(--bg-dark);
   color: var(--text-main);
   min-height: 100vh;
@@ -161,28 +161,21 @@
   margin-bottom: 5px;
 }
 
-.input-group input, .input-group select {
+.input-group input,
+.input-group select {
   width: 100%;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-color);
   padding: 12px;
   border-radius: 8px;
   color: white;
   margin-bottom: 15px;
-  box-sizing: border-box;
 }
-
 
 .input-group select option {
   background-color: #0e1629;
   color: white;
   padding: 10px;
-}
-
-
-.input-group select:focus {
-  outline: none;
-  border-color: var(--sjsu-gold);
 }
 
 .input-row {
@@ -264,13 +257,14 @@
 .icon-box {
   width: 40px;
   height: 40px;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 1.5rem;
-  font-size: 1.2rem;
+  font-size: 0.85rem;
+  font-weight: 700;
 }
 
 .feature-card h3 {
@@ -297,4 +291,29 @@
 .footer-links {
   display: flex;
   gap: 2rem;
+}
+
+@media (max-width: 900px) {
+  .hero-wrapper {
+    flex-direction: column;
+  }
+
+  .search-card {
+    width: 100%;
+  }
+
+  .stats-bar {
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 40px 20px;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .home-footer {
+    flex-direction: column;
+    gap: 10px;
+  }
 }
