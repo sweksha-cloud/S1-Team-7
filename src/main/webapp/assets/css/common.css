@@ -1,0 +1,26 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+.footer {
+  border-top: 1px solid #d9e0eb;
+  color: #475569;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 1rem;
+}
+
+.field-error {
+  margin: -4px 0 2px;
+  color: #b91c1c;
+  font-size: 0.9rem;
+}
