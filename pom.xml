@@ -45,17 +45,6 @@
 
   <build>
     <finalName>uniride</finalName>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.tomcat.maven</groupId>
-        <artifactId>tomcat7-maven-plugin</artifactId>
-        <version>2.2</version>
-        <configuration>
-          <path>/</path>
-          <port>8080</port>
-        </configuration>
-      </plugin>
-    </plugins>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
         <plugin>
