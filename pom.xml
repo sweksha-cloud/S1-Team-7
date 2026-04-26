@@ -93,4 +93,42 @@
       </plugins>
     </pluginManagement>
   </build>
+
+  <profiles>
+    <profile>
+      <id>deploy-local-tomcat</id>
+      <activation>
+        <property>
+          <name>env.CATALINA_HOME</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+              <execution>
+                <id>copy-war-to-tomcat-root</id>
+                <phase>package</phase>
+                <configuration>
+                  <target>
+                    <property environment="env" />
+                    <fail unless="env.CATALINA_HOME"
+                          message="CATALINA_HOME is required to deploy to local Tomcat." />
+                    <copy file="${project.build.directory}/${project.build.finalName}.war"
+                          tofile="${env.CATALINA_HOME}/webapps/ROOT.war"
+                          overwrite="true" />
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

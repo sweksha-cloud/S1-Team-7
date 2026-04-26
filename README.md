@@ -100,6 +100,65 @@ This project follows a **strict ERD → Relational Schema mapping**, meaning:
 
 ---
 
+## 🌐 Run Web App on External Tomcat
+
+This repository includes a Maven profile that builds and deploys the app to your local Tomcat automatically.
+
+### Prerequisites
+
+1. Java 21
+2. Maven 3.8+
+3. Apache Tomcat 9.x
+
+### One-Time Setup
+
+Set your Tomcat home directory in your shell:
+
+```bash
+export CATALINA_HOME=/path/to/apache-tomcat-9.0.xx
+```
+
+You can add this to your shell profile (for example, `~/.zshrc`) so it is always available.
+
+### Build + Deploy
+
+From the project root, run:
+
+```bash
+mvn -Pdeploy-local-tomcat package
+```
+
+This command will:
+
+1. Build `target/uniride.war`
+2. Copy it to `$CATALINA_HOME/webapps/ROOT.war`
+
+### Start Tomcat
+
+```bash
+$CATALINA_HOME/bin/startup.sh
+```
+
+Then open:
+
+* http://localhost:8080/
+
+### After Code Changes
+
+Run the same deploy command again to publish updates:
+
+```bash
+mvn -Pdeploy-local-tomcat package
+```
+
+### Stop Tomcat
+
+```bash
+$CATALINA_HOME/bin/shutdown.sh
+```
+
+---
+
 ## 📊 Sample Data
 
 Each table contains **10 sample records** to:
