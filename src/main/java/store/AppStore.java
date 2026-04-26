@@ -10,6 +10,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Thread-safe in-memory storage for users and their vehicles.
+ */
 public final class AppStore {
     private static final Map<String, User> USERS_BY_EMAIL = new ConcurrentHashMap<>();
     private static final Map<String, List<Vehicle>> VEHICLES_BY_OWNER = new ConcurrentHashMap<>();
@@ -30,6 +33,7 @@ public final class AppStore {
         String password,
         Set<String> roles
     ) {
+        // putIfAbsent enforces unique emails without explicit locking.
         User user = new User(firstName, lastName, email, sjsuId, gender, password, roles);
         User existing = USERS_BY_EMAIL.putIfAbsent(email, user);
         return existing == null ? user : null;
@@ -53,11 +57,13 @@ public final class AppStore {
         if (vehicles == null) {
             return Collections.emptyList();
         }
+        // Return a defensive copy so callers cannot mutate store state.
         return new ArrayList<>(vehicles);
     }
 
     public static void addVehicle(String ownerEmail, String make, String color, String plate) {
         VEHICLES_BY_OWNER.compute(ownerEmail, (key, current) -> {
+            // Copy-on-write keeps map updates atomic and avoids shared mutable lists.
             List<Vehicle> next = current == null ? new ArrayList<>() : new ArrayList<>(current);
             next.add(new Vehicle(ownerEmail, make, color, plate));
             return next;

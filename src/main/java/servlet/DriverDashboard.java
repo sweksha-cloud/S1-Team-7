@@ -10,10 +10,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+/**
+ * Driver dashboard for viewing and managing the current user's vehicles.
+ */
 @WebServlet("/dashboard/driver")
-public class DriverDashboardServlet extends HttpServlet {
+public class DriverDashboard extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // Guard driver routes behind an authenticated session.
         User user = (User) req.getSession(true).getAttribute("currentUser");
         if (user == null) {
             resp.sendRedirect(req.getContextPath() + "/login");
@@ -32,6 +36,7 @@ public class DriverDashboardServlet extends HttpServlet {
             return;
         }
 
+        // Single endpoint handles multiple button actions from the dashboard form.
         String action = req.getParameter("action");
         if ("addVehicle".equals(action)) {
             String make = safe(req.getParameter("make"));
@@ -52,6 +57,9 @@ public class DriverDashboardServlet extends HttpServlet {
         resp.sendRedirect(req.getContextPath() + "/dashboard/driver");
     }
 
+    /**
+     * Null-safe trim helper for request parameters.
+     */
     private String safe(String value) {
         return value == null ? "" : value.trim();
     }

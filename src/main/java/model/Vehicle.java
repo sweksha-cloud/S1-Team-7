@@ -2,6 +2,9 @@ package model;
 
 import java.util.UUID;
 
+/**
+ * Immutable vehicle record associated with a driver account.
+ */
 public class Vehicle {
     private final String id;
     private final String ownerEmail;
@@ -10,6 +13,7 @@ public class Vehicle {
     private final String plate;
 
     public Vehicle(String ownerEmail, String make, String color, String plate) {
+        // UUID avoids coordination and works well for in-memory demo data.
         this.id = UUID.randomUUID().toString();
         this.ownerEmail = ownerEmail;
         this.make = make;

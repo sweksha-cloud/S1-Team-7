@@ -10,8 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+/**
+ * Handles login form rendering and session-based authentication.
+ */
 @WebServlet("/login")
-public class LoginServlet extends HttpServlet {
+public class Login extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
@@ -19,6 +22,7 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // Normalize and trim to avoid duplicate accounts based on casing/spacing.
         String email = safe(req.getParameter("email")).toLowerCase();
         String password = safe(req.getParameter("password"));
 
@@ -44,6 +48,7 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
+        // Persist the authenticated user in session for downstream guards.
         req.getSession(true).setAttribute("currentUser", user);
         if (user.hasRole("driver")) {
             resp.sendRedirect(req.getContextPath() + "/dashboard/driver");
@@ -52,6 +57,9 @@ public class LoginServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Null-safe trim helper for request parameters.
+     */
     private String safe(String value) {
         return value == null ? "" : value.trim();
     }

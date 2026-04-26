@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Immutable account model stored in the in-memory application store.
+ */
 public class User {
     private final String firstName;
     private final String lastName;
@@ -66,6 +69,9 @@ public class User {
         return createdAt;
     }
 
+    /**
+     * Checks whether the user has a specific registration role (driver/passenger).
+     */
     public boolean hasRole(String role) {
         return roles.contains(role);
     }

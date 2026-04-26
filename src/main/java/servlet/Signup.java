@@ -13,8 +13,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+/**
+ * Handles account registration, field validation, and role selection.
+ */
 @WebServlet("/signup")
-public class SignupServlet extends HttpServlet {
+public class Signup extends HttpServlet {
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
     private static final Pattern SJSU_ID_PATTERN = Pattern.compile("^\\d{9}$");
 
@@ -25,6 +28,7 @@ public class SignupServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // Read and normalize all inputs before validation.
         String firstName = safe(req.getParameter("firstName"));
         String lastName = safe(req.getParameter("lastName"));
         String email = safe(req.getParameter("email")).toLowerCase();
@@ -67,6 +71,7 @@ public class SignupServlet extends HttpServlet {
         Set<String> roles = new HashSet<>();
         if (rolesArray != null) {
             for (String role : rolesArray) {
+                // Whitelist supported roles and ignore unknown values.
                 if ("driver".equals(role) || "passenger".equals(role)) {
                     roles.add(role);
                 }
@@ -93,6 +98,7 @@ public class SignupServlet extends HttpServlet {
     }
 
     private boolean hasErrors(HttpServletRequest req) {
+        // Any populated error attribute means validation failed.
         return req.getAttribute("errorFirstName") != null
             || req.getAttribute("errorLastName") != null
             || req.getAttribute("errorEmail") != null
@@ -102,6 +108,9 @@ public class SignupServlet extends HttpServlet {
             || req.getAttribute("errorRoles") != null;
     }
 
+    /**
+     * Null-safe trim helper for request parameters.
+     */
     private String safe(String value) {
         return value == null ? "" : value.trim();
     }
