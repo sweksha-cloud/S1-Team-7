@@ -166,7 +166,7 @@ public final class AppStore {
 
     public static List<Vehicle> getVehiclesForOwner(String ownerEmail) {
         String sql =
-            "SELECT v.Vehicle_ID, v.Make, v.Model, v.Color, v.License_Plate, v.Total_Seats " +
+            "SELECT v.Vehicle_ID, v.Make, v.Model, v.Color, v.License_Plate, v.Total_Seats, v.Insurance_Num " +
             "FROM Vehicles v " +
             "JOIN Owns o ON o.Vehicle_ID = v.Vehicle_ID " +
             "JOIN Users u ON u.User_ID = o.User_ID " +
@@ -187,7 +187,7 @@ public final class AppStore {
                         rs.getString("Color"),
                         rs.getString("License_Plate"),
                         rs.getInt("Total_Seats"),
-                        rs.getString("Insurance_Number")
+                        rs.getString("Insurance_Num")
                     ));
                 }
             }
@@ -199,9 +199,9 @@ public final class AppStore {
     }
 
     public static void addVehicle(String ownerEmail, String make, String model,
-                                   String color, String plate, int totalSeats) {
+                                   String color, String plate, int totalSeats, String insuranceNum) {
         String insertVehicle =
-            "INSERT INTO Vehicles (License_Plate, Make, Model, Color, Total_Seats) VALUES (?, ?, ?, ?, ?)";
+            "INSERT INTO Vehicles (License_Plate, Make, Model, Color, Total_Seats, Insurance_Num) VALUES (?, ?, ?, ?, ?, ?)";
         String insertOwns =
             "INSERT INTO Owns (User_ID, Vehicle_ID) " +
             "SELECT User_ID, ? FROM Users WHERE Email = ? AND Account_Status = 'active'";
@@ -215,6 +215,7 @@ public final class AppStore {
                 pv.setString(3, model);
                 pv.setString(4, color);
                 pv.setInt(5, totalSeats);
+                pv.setString(6, insuranceNum);
                 pv.executeUpdate();
                 try (ResultSet keys = pv.getGeneratedKeys()) {
                     if (!keys.next()) throw new SQLException("No generated key for vehicle");
@@ -247,6 +248,26 @@ public final class AppStore {
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("deleteVehicle failed", e);
+        }
+    }
+
+    // --------------------------------------------------------------- rides
+
+    public static void createRide(String origin, String destination, String departureDate, int seatsLeft) {
+        String sql = "INSERT INTO Rides (Origin, Destination, Departure_Date, Seats_Left, Status) " +
+                     "VALUES (?, ?, ?, ?, 'open')";
+
+        try (Connection c = DBConnection.get();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            
+            ps.setString(1, origin);
+            ps.setString(2, destination);
+            ps.setString(3, departureDate); 
+            ps.setInt(4, seatsLeft);
+            
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("createRide failed", e);
         }
     }
 }

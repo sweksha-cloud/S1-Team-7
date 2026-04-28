@@ -35,6 +35,15 @@ public class DriverDashboard extends HttpServlet {
             return;
         }
 
+        String action = safe(req.getParameter("action"));
+
+        // Navigate to ride creation form if requested
+        if ("showCreateRideForm".equals(action)) {
+            req.setAttribute("vehicles", AppStore.getVehiclesForOwner(user.getEmail()));
+            req.getRequestDispatcher("/WEB-INF/views/create-ride.jsp").forward(req, resp);
+            return;
+        }
+
         req.setAttribute("vehicles", AppStore.getVehiclesForOwner(user.getEmail()));
         req.getRequestDispatcher("/WEB-INF/views/driver-dashboard.jsp").forward(req, resp);
     }
@@ -59,17 +68,38 @@ public class DriverDashboard extends HttpServlet {
 
         // One endpoint keeps the form simple while still supporting multiple actions.
         String action = req.getParameter("action");
+
+        // Handles the persistence of a new ride post
+        if ("processCreateRide".equals(action)) {
+            String origin = safe(req.getParameter("origin"));
+            String destination = safe(req.getParameter("destination"));
+            String departureDate = safe(req.getParameter("departureDate")); 
+            String seatsLeft = safe(req.getParameter("seatsLeft"));
+
+            if (!origin.isBlank() && !destination.isBlank() && !departureDate.isBlank()) {
+                try {
+                    int seats = Integer.parseInt(seatsLeft);
+                    // Standardize HTML T-separator for MySQL DATETIME
+                    String sqlTimestamp = departureDate.replace("T", " ") + ":00";
+                    AppStore.createRide(origin, destination, sqlTimestamp, seats);
+                } catch (NumberFormatException ignored) {}
+            }
+        }
+
         if ("addVehicle".equals(action)) {
             String make = safe(req.getParameter("make"));
             String model = safe(req.getParameter("model"));
             String color = safe(req.getParameter("color"));
             String plate = safe(req.getParameter("plate"));
             String totalSeats = safe(req.getParameter("totalSeats"));
+            // Include insurance field from your database
+            String insuranceNum = safe(req.getParameter("insuranceNum")); 
+
             if (!make.isBlank() && !model.isBlank() && !color.isBlank() && !plate.isBlank() && !totalSeats.isBlank()) {
                 try {
                     int seats = Integer.parseInt(totalSeats);
                     if (seats > 0) {
-                        AppStore.addVehicle(user.getEmail(), make, model, color, plate, seats);
+                        AppStore.addVehicle(user.getEmail(), make, model, color, plate, seats, insuranceNum);
                     }
                 } catch (NumberFormatException ignored) {
                     // Ignore invalid seat counts and fall through to the redirect.

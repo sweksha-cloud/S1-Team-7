@@ -71,7 +71,9 @@ if (vehicles == null) {
               </p>
             </div>
             <div class="dashboard-actions">
-              <button class="login-submit action-create"   type="button">Create a Ride</button>
+              <a href="<%= cp %>/dashboard/driver?action=showCreateRideForm" class="login-submit action-create" style="text-decoration: none; display: inline-block; text-align: center;">
+                Create a Ride
+            </a>
               <button class="login-submit action-requests" type="button">Passenger Requests</button>
               <button class="login-submit action-earnings" type="button">My Earnings</button>
             </div>
