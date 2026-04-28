@@ -87,7 +87,7 @@ if (roles != null) {
           <select id="gender" name="gender">
             <option value="">Select gender</option>
             <option value="male"             <%= "male".equals(gender)             ? "selected" : "" %>>Male</option>
-            <option value="female"<%= "female".equals(gender)           ? "selected" : "" %>>Female</option>
+            <option value="female"           <%= "female".equals(gender)           ? "selected" : "" %>>Female</option>
             <option value="non-binary"       <%= "non-binary".equals(gender)       ? "selected" : "" %>>Non-binary</option>
             <option value="prefer-not-to-say" <%= "prefer-not-to-say".equals(gender) ? "selected" : "" %>>Prefer not to say</option>
           </select>
@@ -111,7 +111,7 @@ if (roles != null) {
           <% if (request.getAttribute("errorRoles") != null) { %><p class="field-error"><%= request.getAttribute("errorRoles") %></p><% } %>
 
           <%-- License number field — shown/hidden by JavaScript based on driver checkbox --%>
-          <div id="licenseField" style="display:<%= roleDriver ? "block" : "none" %>;">
+          <div id="licenseField" class="<%= roleDriver ? "d-block" : "d-none" %>">
             <label for="licenseNumber">Driver's License Number</label>
             <input id="licenseNumber" name="licenseNumber" type="text"
                    value="<%= licenseNumber %>" placeholder="e.g. D1234567" />
