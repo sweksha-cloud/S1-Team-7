@@ -6,6 +6,7 @@
 String cp = request.getContextPath();
 User currentUser = (User) session.getAttribute("currentUser");
 List<Vehicle> vehicles = (List<Vehicle>) request.getAttribute("vehicles");
+boolean pending = request.getAttribute("pendingVerification") != null;
 if (vehicles == null) {
   vehicles = java.util.Collections.emptyList();
 }
@@ -36,50 +37,77 @@ if (vehicles == null) {
     <div class="dashboard-main">
       <div class="dashboard-main-inner">
 
-        <div class="dashboard-actions">
-          <button class="login-submit action-create" type="button">Create a Ride</button>
-          <button class="login-submit action-requests" type="button">Passenger Requests</button>
-          <button class="login-submit action-earnings" type="button">My Earnings</button>
-          <button class="login-submit action-settings" type="button">Settings</button>
-        </div>
-
-        <div class="login-shell dashboard-card">
-          <h3>My Registered Vehicles</h3>
-
-          <% if (vehicles.isEmpty()) { %>
-            <p class="dashboard-empty">No vehicles added yet.</p>
-          <% } else { %>
-            <% for (Vehicle vehicle : vehicles) { %>
-              <div class="vehicle-row">
-                <div>
-                  <strong><%= vehicle.getColor() %> <%= vehicle.getMake() %></strong><br />
-                  <small class="vehicle-plate">Plate: <%= vehicle.getPlate() %></small>
-                </div>
-                <form method="post" action="<%= cp %>/dashboard/driver" class="dashboard-inline-form">
-                  <input type="hidden" name="action" value="deleteVehicle" />
-                  <input type="hidden" name="vehicleId" value="<%= vehicle.getId() %>" />
-                  <button type="submit" class="vehicle-delete">Delete</button>
-                </form>
-              </div>
-            <% } %>
-          <% } %>
-
-          <form method="post" action="<%= cp %>/dashboard/driver" class="dashboard-form-grid">
-            <input type="hidden" name="action" value="addVehicle" />
-            <input type="text" name="make" placeholder="Vehicle make (e.g. Toyota)" required />
-            <input type="text" name="color" placeholder="Vehicle color" required />
-            <input type="text" name="plate" placeholder="License plate" required />
-            <button class="login-submit dashboard-add-vehicle" type="submit">Add New Vehicle</button>
-          </form>
-
-          <div class="dashboard-danger-wrap">
-            <form method="post" action="<%= cp %>/delete-account" onsubmit="return confirm('Are you sure you want to delete your account?');">
-              <button type="submit" class="dashboard-danger-btn">
-                Delete Account
-              </button>
-            </form>
+        <% if (pending) { %>
+          <%-- Pending verification screen --%>
+          <div class="login-shell dashboard-card" style="text-align:center; padding: 2rem;">
+            <h3>Account Pending Verification</h3>
+            <p style="margin-top: 1rem;">
+              Your driver account is currently under review. Once verified by an admin,
+              you will have full access to the driver dashboard.
+            </p>
+            <p style="margin-top: 0.5rem; color: #888;">
+              In the meantime, you can use UniRide as a passenger.
+            </p>
+            <div style="margin-top: 1.5rem;">
+              <a href="<%= cp %>/dashboard/passenger" class="login-submit" style="text-decoration:none; padding: 0.6rem 1.2rem;">
+                Go to Passenger Dashboard
+              </a>
+            </div>
+            <div class="dashboard-danger-wrap" style="margin-top: 2rem;">
+              <form method="post" action="<%= cp %>/delete-account"
+                    onsubmit="return confirm('Are you sure you want to delete your account?');">
+                <button type="submit" class="dashboard-danger-btn">Delete Account</button>
+              </form>
+            </div>
           </div>
-        </div>
+
+        <% } else { %>
+          <%-- Full driver dashboard --%>
+          <div class="dashboard-actions">
+            <button class="login-submit action-create"   type="button">Create a Ride</button>
+            <button class="login-submit action-requests" type="button">Passenger Requests</button>
+            <button class="login-submit action-earnings" type="button">My Earnings</button>
+            <button class="login-submit action-settings" type="button">Settings</button>
+          </div>
+
+          <div class="login-shell dashboard-card">
+            <h3>My Registered Vehicles</h3>
+
+            <% if (vehicles.isEmpty()) { %>
+              <p class="dashboard-empty">No vehicles added yet.</p>
+            <% } else { %>
+              <% for (Vehicle vehicle : vehicles) { %>
+                <div class="vehicle-row">
+                  <div>
+                    <strong><%= vehicle.getColor() %> <%= vehicle.getMake() %></strong><br />
+                    <small class="vehicle-plate">Plate: <%= vehicle.getPlate() %></small>
+                  </div>
+                  <form method="post" action="<%= cp %>/dashboard/driver" class="dashboard-inline-form">
+                    <input type="hidden" name="action"    value="deleteVehicle" />
+                    <input type="hidden" name="vehicleId" value="<%= vehicle.getId() %>" />
+                    <button type="submit" class="vehicle-delete">Delete</button>
+                  </form>
+                </div>
+              <% } %>
+            <% } %>
+
+            <form method="post" action="<%= cp %>/dashboard/driver" class="dashboard-form-grid">
+              <input type="hidden" name="action" value="addVehicle" />
+              <input type="text" name="make"  placeholder="Vehicle make (e.g. Toyota)" required />
+              <input type="text" name="color" placeholder="Vehicle color"              required />
+              <input type="text" name="plate" placeholder="License plate"              required />
+              <button class="login-submit dashboard-add-vehicle" type="submit">Add New Vehicle</button>
+            </form>
+
+            <div class="dashboard-danger-wrap">
+              <form method="post" action="<%= cp %>/delete-account"
+                    onsubmit="return confirm('Are you sure you want to delete your account?');">
+                <button type="submit" class="dashboard-danger-btn">Delete Account</button>
+              </form>
+            </div>
+          </div>
+        <% } %>
+
       </div>
     </div>
   </div>

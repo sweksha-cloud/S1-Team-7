@@ -13,9 +13,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-/**
- * Handles account registration, field validation, and role selection.
- */
 @WebServlet("/signup")
 public class Signup extends HttpServlet {
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
@@ -28,27 +25,25 @@ public class Signup extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // Read and normalize all inputs before validation.
-        String firstName = safe(req.getParameter("firstName"));
-        String lastName = safe(req.getParameter("lastName"));
-        String email = safe(req.getParameter("email")).toLowerCase();
-        String sjsuId = safe(req.getParameter("sjsuId"));
-        String gender = safe(req.getParameter("gender"));
-        String password = safe(req.getParameter("password"));
-        String[] rolesArray = req.getParameterValues("roles");
+        String firstName     = safe(req.getParameter("firstName"));
+        String lastName      = safe(req.getParameter("lastName"));
+        String email         = safe(req.getParameter("email")).toLowerCase();
+        String sjsuId        = safe(req.getParameter("sjsuId"));
+        String gender        = safe(req.getParameter("gender"));
+        String password      = safe(req.getParameter("password"));
+        String licenseNumber = safe(req.getParameter("licenseNumber"));
+        String[] rolesArray  = req.getParameterValues("roles");
 
-        req.setAttribute("firstName", firstName);
-        req.setAttribute("lastName", lastName);
-        req.setAttribute("email", email);
-        req.setAttribute("sjsuId", sjsuId);
-        req.setAttribute("gender", gender);
+        req.setAttribute("firstName",     firstName);
+        req.setAttribute("lastName",      lastName);
+        req.setAttribute("email",         email);
+        req.setAttribute("sjsuId",        sjsuId);
+        req.setAttribute("gender",        gender);
+        req.setAttribute("licenseNumber", licenseNumber);
 
-        if (firstName.isBlank()) {
-            req.setAttribute("errorFirstName", "First name is required.");
-        }
-        if (lastName.isBlank()) {
-            req.setAttribute("errorLastName", "Last name is required.");
-        }
+        if (firstName.isBlank())  req.setAttribute("errorFirstName", "First name is required.");
+        if (lastName.isBlank())   req.setAttribute("errorLastName",  "Last name is required.");
+
         if (email.isBlank()) {
             req.setAttribute("errorEmail", "Email is required.");
         } else if (!EMAIL_PATTERN.matcher(email).matches()) {
@@ -56,12 +51,12 @@ public class Signup extends HttpServlet {
         } else if (AppStore.hasUser(email)) {
             req.setAttribute("errorEmail", "This email is already registered.");
         }
+
         if (!SJSU_ID_PATTERN.matcher(sjsuId).matches()) {
             req.setAttribute("errorSjsuId", "SJSU ID must be 9 digits.");
         }
-        if (gender.isBlank()) {
-            req.setAttribute("errorGender", "Please select a gender.");
-        }
+        if (gender.isBlank()) req.setAttribute("errorGender", "Please select a gender.");
+
         if (password.isBlank()) {
             req.setAttribute("errorPassword", "Password is required.");
         } else if (password.length() < 8) {
@@ -71,14 +66,16 @@ public class Signup extends HttpServlet {
         Set<String> roles = new HashSet<>();
         if (rolesArray != null) {
             for (String role : rolesArray) {
-                // Whitelist supported roles and ignore unknown values.
-                if ("driver".equals(role) || "passenger".equals(role)) {
-                    roles.add(role);
-                }
+                if ("driver".equals(role) || "passenger".equals(role)) roles.add(role);
             }
         }
         if (roles.isEmpty()) {
             req.setAttribute("errorRoles", "Please choose at least one registration type.");
+        }
+
+        // Require license number if registering as a driver.
+        if (roles.contains("driver") && licenseNumber.isBlank()) {
+            req.setAttribute("errorLicense", "License number is required for drivers.");
         }
 
         if (hasErrors(req)) {
@@ -86,31 +83,35 @@ public class Signup extends HttpServlet {
             return;
         }
 
-        User user = AppStore.createUser(firstName, lastName, email, sjsuId, gender, password, roles);
+        User user = AppStore.createUser(firstName, lastName, email, sjsuId, gender, password, roles, licenseNumber);
         if (user == null) {
             req.setAttribute("errorEmail", "This email is already registered.");
             req.getRequestDispatcher("/WEB-INF/views/signup.jsp").forward(req, resp);
             return;
         }
 
-        req.setAttribute("successMessage", "Registration complete. Your account has been created.");
+        // Tell the user their account is pending if they signed up as a driver.
+        if (roles.contains("driver")) {
+            req.setAttribute("successMessage",
+                "Registration complete! Your driver account is pending verification. " +
+                "You can log in as a passenger in the meantime.");
+        } else {
+            req.setAttribute("successMessage", "Registration complete. Your account has been created.");
+        }
         req.getRequestDispatcher("/WEB-INF/views/signup.jsp").forward(req, resp);
     }
 
     private boolean hasErrors(HttpServletRequest req) {
-        // Any populated error attribute means validation failed.
         return req.getAttribute("errorFirstName") != null
-            || req.getAttribute("errorLastName") != null
-            || req.getAttribute("errorEmail") != null
-            || req.getAttribute("errorSjsuId") != null
-            || req.getAttribute("errorGender") != null
-            || req.getAttribute("errorPassword") != null
-            || req.getAttribute("errorRoles") != null;
+            || req.getAttribute("errorLastName")  != null
+            || req.getAttribute("errorEmail")     != null
+            || req.getAttribute("errorSjsuId")    != null
+            || req.getAttribute("errorGender")    != null
+            || req.getAttribute("errorPassword")  != null
+            || req.getAttribute("errorRoles")     != null
+            || req.getAttribute("errorLicense")   != null;
     }
 
-    /**
-     * Null-safe trim helper for request parameters.
-     */
     private String safe(String value) {
         return value == null ? "" : value.trim();
     }
