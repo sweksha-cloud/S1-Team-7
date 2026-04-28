@@ -133,6 +133,19 @@ public final class AppStore {
         }
     }
 
+    public static boolean updatePassword(String email, String newPassword) {
+        String sql = "UPDATE Users SET Password_Hash = ? WHERE Email = ? AND Account_Status = 'active'";
+        try (Connection c = DBConnection.get();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, newPassword);
+            ps.setString(2, email);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException("updatePassword failed", e);
+        }
+    }
+
     /** Returns 'pending', 'verified', or null if not a driver. */
     public static String getDriverVerificationStatus(String email) {
         String sql =

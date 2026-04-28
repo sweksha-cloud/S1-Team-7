@@ -28,6 +28,7 @@ if (vehicles == null) {
       <h1 class="logo"><a href="<%= cp %>/home">UniRide</a></h1>
       <div class="nav-links dashboard-nav-links">
         <span class="dashboard-welcome">Welcome <%= currentUser != null ? currentUser.getFirstName() : "Driver" %></span>
+        <a href="<%= cp %>/settings" class="login-submit dashboard-settings">Settings</a>
         <form method="post" action="<%= cp %>/logout" class="dashboard-inline-form">
           <button type="submit" class="login-submit dashboard-signout">Sign Out</button>
         </form>
