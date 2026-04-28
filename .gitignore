@@ -12,9 +12,6 @@ dist
 dist-ssr
 *.local
 target
-.classpath
-.project
-.settings/
 
 # Editor directories and files
 .vscode/*
