@@ -10,7 +10,6 @@
 }
 
 .navbar {
-  /* The shared top bar establishes the logged-in layout across driver, passenger, and settings screens. */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -68,7 +67,6 @@
   box-shadow: 0 8px 14px rgba(255, 255, 255, 0.15);
 }
 
-/* Ensure primary and secondary nav buttons inside dashboard header share the same sizing */
 .dashboard-nav-links .nav-btn-primary,
 .dashboard-nav-links .nav-btn-secondary {
   padding: var(--spacing-md) var(--spacing-lg);
@@ -205,11 +203,16 @@
 
 .dashboard-actions {
   display: flex;
-  flex-wrap: nowrap;
-  gap: var(--spacing-lg);
-  width: 100%;
-  justify-self: end;
-  align-items: stretch;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 1.5rem;
+}
+
+.dashboard-actions .login-submit {
+  width: auto;
+  min-width: 150px;
+  margin: 0;
 }
 
 .dashboard-section h2,
@@ -242,8 +245,11 @@
 
 .dashboard-empty {
   text-align: center;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
   color: var(--text-dim);
-  padding: var(--spacing-2xl);
+  border: 1px dashed #444;
 }
 
 .vehicle-row {
@@ -295,15 +301,27 @@
   color: #fff;
 }
 
+.vehicle-form-container {
+  max-width: 500px;
+  margin: 3rem auto 0 auto;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  text-align: center;
+}
+
 .dashboard-form-grid {
-  margin-top: var(--spacing-2xl);
-  display: grid;
-  gap: var(--spacing-md);
-  max-width: 760px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  margin-top: var(--spacing-lg);
 }
 
 .dashboard-form-grid input {
   width: 100%;
+  max-width: 400px;
   background: rgba(255, 255, 255, 0.05);
   color: var(--text-main);
   padding: var(--spacing-md);
@@ -314,7 +332,9 @@
 }
 
 .dashboard-add-vehicle {
-  margin: 0;
+  width: 100%;
+  max-width: 400px;
+  margin-top: 1rem;
   background: var(--text-main);
   color: var(--bg-dark);
   padding: var(--spacing-md) var(--spacing-lg);
@@ -328,6 +348,10 @@
 .dashboard-add-vehicle:hover {
   background-color: var(--sjsu-gold);
   transform: translateY(-2px);
+}
+
+.vehicle-list-container {
+  margin-bottom: 2rem;
 }
 
 .dashboard-danger-wrap {
@@ -367,7 +391,6 @@
   color: var(--text-main);
 }
 
-/* Dashboard Action Buttons */
 .action-create,
 .action-requests,
 .action-earnings,

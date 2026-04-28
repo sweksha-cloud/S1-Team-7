@@ -22,6 +22,8 @@ if (vehicles == null) {
   <link rel="stylesheet" href="<%= cp %>/assets/css/home.css?v=20260427" />
   <link rel="stylesheet" href="<%= cp %>/assets/css/login.css?v=20260427" />
   <link rel="stylesheet" href="<%= cp %>/assets/css/dashboard.css?v=20260427" />
+  <style>
+  </style>
 </head>
 <body>
   <div class="login-page dashboard-page">
@@ -71,9 +73,9 @@ if (vehicles == null) {
               </p>
             </div>
             <div class="dashboard-actions">
-              <a href="<%= cp %>/dashboard/driver?action=showCreateRideForm" class="login-submit action-create" style="text-decoration: none; display: inline-block; text-align: center;">
+              <a href="<%= cp %>/dashboard/driver?action=showCreateRideForm" class="login-submit action-create" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
                 Create a Ride
-            </a>
+              </a>
               <button class="login-submit action-requests" type="button">Passenger Requests</button>
               <button class="login-submit action-earnings" type="button">My Earnings</button>
             </div>
@@ -85,34 +87,40 @@ if (vehicles == null) {
               <p>Add each vehicle once and keep its details current for matching and pickup.</p>
             </div>
 
-            <% if (vehicles.isEmpty()) { %>
-              <p class="dashboard-empty">No vehicles added yet.</p>
-            <% } else { %>
-              <% for (Vehicle vehicle : vehicles) { %>
-                <div class="vehicle-row">
-                  <div class="vehicle-info">
-                    <strong><%= vehicle.getColor() %> <%= vehicle.getMake() %> <%= vehicle.getModel() %></strong><br />
-                    <small class="vehicle-meta">Plate: <%= vehicle.getPlate() %></small>
-                    <small class="vehicle-meta">Total seats: <%= vehicle.getTotalSeats() %></small>
-                  </div>
-                  <form method="post" action="<%= cp %>/dashboard/driver" class="dashboard-inline-form">
-                    <input type="hidden" name="action"    value="deleteVehicle" />
-                    <input type="hidden" name="vehicleId" value="<%= vehicle.getId() %>" />
-                    <button type="submit" class="vehicle-delete">Delete</button>
-                  </form>
-                </div>
-              <% } %>
-            <% } %>
+            <div class="vehicle-list-container">
+                <% if (vehicles.isEmpty()) { %>
+                  <p class="dashboard-empty">No vehicles added yet.</p>
+                <% } else { %>
+                  <% for (Vehicle vehicle : vehicles) { %>
+                    <div class="vehicle-row">
+                      <div class="vehicle-info">
+                        <strong><%= vehicle.getColor() %> <%= vehicle.getMake() %> <%= vehicle.getModel() %></strong><br />
+                        <small class="vehicle-meta">Plate: <%= vehicle.getPlate() %></small>
+                        <small class="vehicle-meta">Total seats: <%= vehicle.getTotalSeats() %></small>
+                      </div>
+                      <form method="post" action="<%= cp %>/dashboard/driver" class="dashboard-inline-form">
+                        <input type="hidden" name="action"    value="deleteVehicle" />
+                        <input type="hidden" name="vehicleId" value="<%= vehicle.getId() %>" />
+                        <button type="submit" class="vehicle-delete">Delete</button>
+                      </form>
+                    </div>
+                  <% } %>
+                <% } %>
+            </div>
 
-            <form method="post" action="<%= cp %>/dashboard/driver" class="dashboard-form-grid">
-              <input type="hidden" name="action" value="addVehicle" />
-              <input type="text" name="make"  placeholder="Vehicle make (e.g. Toyota)" required />
-              <input type="text" name="model" placeholder="Vehicle model (e.g. Camry)" required />
-              <input type="text" name="color" placeholder="Vehicle color"              required />
-              <input type="text" name="plate" placeholder="License plate"              required />
-              <input type="number" name="totalSeats" placeholder="Total seats" min="1" required />
-              <button class="login-submit dashboard-add-vehicle" type="submit">Add New Vehicle</button>
-            </form>
+            <%-- Centered Add Vehicle Form --%>
+            <div class="vehicle-form-container">
+                <h4 style="margin-bottom: 1rem; color: var(--sjsu-gold);">Add a New Vehicle</h4>
+                <form method="post" action="<%= cp %>/dashboard/driver" class="dashboard-form-grid">
+                  <input type="hidden" name="action" value="addVehicle" />
+                  <input type="text" name="make"  class="login-input" placeholder="Vehicle make (e.g. Toyota)" required />
+                  <input type="text" name="model" class="login-input" placeholder="Vehicle model (e.g. Camry)" required />
+                  <input type="text" name="color" class="login-input" placeholder="Vehicle color"              required />
+                  <input type="text" name="plate" class="login-input" placeholder="License plate"              required />
+                  <input type="number" name="totalSeats" class="login-input" placeholder="Total seats" min="1" required />
+                  <button class="login-submit dashboard-add-vehicle" type="submit" style="width: 100%; margin-top: 1rem;">Add Vehicle</button>
+                </form>
+            </div>
 
           </section>
         <% } %>
