@@ -100,6 +100,7 @@ public class Signup extends HttpServlet {
         }
         req.getRequestDispatcher("/WEB-INF/views/signup.jsp").forward(req, resp);
     }
+    
 
     private boolean hasErrors(HttpServletRequest req) {
         return req.getAttribute("errorFirstName") != null

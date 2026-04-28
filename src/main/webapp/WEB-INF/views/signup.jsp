@@ -1,26 +1,28 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%
 String cp = request.getContextPath();
-String firstName = (String) request.getAttribute("firstName");
-String lastName = (String) request.getAttribute("lastName");
-String email = (String) request.getAttribute("email");
-String sjsuId = (String) request.getAttribute("sjsuId");
-String gender = (String) request.getAttribute("gender");
+String firstName     = (String) request.getAttribute("firstName");
+String lastName      = (String) request.getAttribute("lastName");
+String email         = (String) request.getAttribute("email");
+String sjsuId        = (String) request.getAttribute("sjsuId");
+String gender        = (String) request.getAttribute("gender");
+String licenseNumber = (String) request.getAttribute("licenseNumber");
 String successMessage = (String) request.getAttribute("successMessage");
 String[] roles = request.getParameterValues("roles");
 
-if (firstName == null) firstName = "";
-if (lastName == null) lastName = "";
-if (email == null) email = "";
-if (sjsuId == null) sjsuId = "";
-if (gender == null) gender = "";
+if (firstName     == null) firstName     = "";
+if (lastName      == null) lastName      = "";
+if (email         == null) email         = "";
+if (sjsuId        == null) sjsuId        = "";
+if (gender        == null) gender        = "";
+if (licenseNumber == null) licenseNumber = "";
 
 boolean rolePassenger = false;
-boolean roleDriver = false;
+boolean roleDriver    = false;
 if (roles != null) {
   for (String role : roles) {
     if ("passenger".equals(role)) rolePassenger = true;
-    if ("driver".equals(role)) roleDriver = true;
+    if ("driver".equals(role))    roleDriver    = true;
   }
 }
 %>
@@ -56,7 +58,6 @@ if (roles != null) {
               <input id="firstName" name="firstName" type="text" value="<%= firstName %>" placeholder="First name" />
               <% if (request.getAttribute("errorFirstName") != null) { %><p class="field-error"><%= request.getAttribute("errorFirstName") %></p><% } %>
             </div>
-
             <div class="name-field">
               <label for="lastName">Last name</label>
               <input id="lastName" name="lastName" type="text" value="<%= lastName %>" placeholder="Last name" />
@@ -75,9 +76,9 @@ if (roles != null) {
           <label for="gender">Gender</label>
           <select id="gender" name="gender">
             <option value="">Select gender</option>
-            <option value="male" <%= "male".equals(gender) ? "selected" : "" %>>Male</option>
-            <option value="female" <%= "female".equals(gender) ? "selected" : "" %>>Female</option>
-            <option value="non-binary" <%= "non-binary".equals(gender) ? "selected" : "" %>>Non-binary</option>
+            <option value="male"             <%= "male".equals(gender)             ? "selected" : "" %>>Male</option>
+            <option value="female"<%= "female".equals(gender)           ? "selected" : "" %>>Female</option>
+            <option value="non-binary"       <%= "non-binary".equals(gender)       ? "selected" : "" %>>Non-binary</option>
             <option value="prefer-not-to-say" <%= "prefer-not-to-say".equals(gender) ? "selected" : "" %>>Prefer not to say</option>
           </select>
           <% if (request.getAttribute("errorGender") != null) { %><p class="field-error"><%= request.getAttribute("errorGender") %></p><% } %>
@@ -93,11 +94,21 @@ if (roles != null) {
               Passenger
             </label>
             <label>
-              <input type="checkbox" name="roles" value="driver" <%= roleDriver ? "checked" : "" %> />
+              <input type="checkbox" id="driverCheckbox" name="roles" value="driver" <%= roleDriver ? "checked" : "" %> />
               Driver
             </label>
           </fieldset>
           <% if (request.getAttribute("errorRoles") != null) { %><p class="field-error"><%= request.getAttribute("errorRoles") %></p><% } %>
+
+          <%-- License number field — shown/hidden by JavaScript based on driver checkbox --%>
+          <div id="licenseField" style="display:<%= roleDriver ? "block" : "none" %>;">
+            <label for="licenseNumber">Driver's License Number</label>
+            <input id="licenseNumber" name="licenseNumber" type="text"
+                   value="<%= licenseNumber %>" placeholder="e.g. D1234567" />
+            <% if (request.getAttribute("errorLicense") != null) { %>
+              <p class="field-error"><%= request.getAttribute("errorLicense") %></p>
+            <% } %>
+          </div>
 
           <button class="signup-submit" type="submit">Create account</button>
 
@@ -112,5 +123,13 @@ if (roles != null) {
       <p>Copyright 2026 UniRide | SJSU Carpool System</p>
     </footer>
   </div>
+
+  <script>
+    const driverCheckbox = document.getElementById('driverCheckbox');
+    const licenseField   = document.getElementById('licenseField');
+    driverCheckbox.addEventListener('change', function () {
+      licenseField.style.display = this.checked ? 'block' : 'none';
+    });
+  </script>
 </body>
 </html>
