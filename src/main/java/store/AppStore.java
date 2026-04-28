@@ -39,12 +39,10 @@ public final class AppStore {
 
         if (hasUser(email)) return null;
 
-        String roleValue = roles.contains("driver") ? "driver" : "passenger";
-
         String insertUser =
             "INSERT INTO Users (SJSU_ID, First_Name, Last_Name, Email, Gender, " +
-            "                   Password_Hash, Role, Account_Status) " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, 'active')";
+            "                   Password_Hash, Account_Status) " +
+            "VALUES (?, ?, ?, ?, ?, ?, 'active')";
 
         try (Connection c = DBConnection.get();
              PreparedStatement ps = c.prepareStatement(insertUser, Statement.RETURN_GENERATED_KEYS)) {
@@ -55,7 +53,6 @@ public final class AppStore {
             ps.setString(4, email);
             ps.setString(5, gender);
             ps.setString(6, password);
-            ps.setString(7, roleValue);
             ps.executeUpdate();
 
             int userId;
@@ -89,8 +86,13 @@ public final class AppStore {
 
     public static User authenticate(String email, String password) {
         String sql =
-            "SELECT First_Name, Last_Name, SJSU_ID, Gender, Password_Hash, Role " +
-            "FROM Users WHERE Email = ? AND Account_Status = 'active' LIMIT 1";
+            "SELECT u.First_Name, u.Last_Name, u.SJSU_ID, u.Gender, u.Password_Hash, " +
+            "       CASE WHEN d.User_ID IS NOT NULL THEN 1 ELSE 0 END AS Is_Driver, " +
+            "       CASE WHEN p.User_ID IS NOT NULL THEN 1 ELSE 0 END AS Is_Passenger " +
+            "FROM Users u " +
+            "LEFT JOIN Drivers d ON d.User_ID = u.User_ID " +
+            "LEFT JOIN Passengers p ON p.User_ID = u.User_ID " +
+            "WHERE u.Email = ? AND u.Account_Status = 'active' LIMIT 1";
 
         try (Connection c = DBConnection.get();
              PreparedStatement ps = c.prepareStatement(sql)) {
@@ -106,12 +108,12 @@ public final class AppStore {
                 String lastName  = rs.getString("Last_Name");
                 String sjsuId    = rs.getString("SJSU_ID");
                 String gender    = rs.getString("Gender");
-                String role      = rs.getString("Role");
+                boolean isDriver = rs.getInt("Is_Driver") == 1;
+                boolean isPassenger = rs.getInt("Is_Passenger") == 1;
 
                 Set<String> roles = new HashSet<>();
-                if ("driver".equals(role))    roles.add("driver");
-                if ("passenger".equals(role)) roles.add("passenger");
-                if ("both".equals(role))      { roles.add("driver"); roles.add("passenger"); }
+                if (isDriver) roles.add("driver");
+                if (isPassenger) roles.add("passenger");
 
                 return new User(firstName, lastName, email, sjsuId, gender, storedHash, roles);
             }

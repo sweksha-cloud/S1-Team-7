@@ -110,8 +110,8 @@ if (roles != null) {
           </fieldset>
           <% if (request.getAttribute("errorRoles") != null) { %><p class="field-error"><%= request.getAttribute("errorRoles") %></p><% } %>
 
-          <%-- License number field — shown/hidden by JavaScript based on driver checkbox --%>
-          <div id="licenseField" class="<%= roleDriver ? "d-block" : "d-none" %>">
+          <%-- License number field — shown only when Driver is selected --%>
+          <div id="licenseField" style="display: <%= roleDriver ? "block" : "none" %>;">
             <label for="licenseNumber">Driver's License Number</label>
             <input id="licenseNumber" name="licenseNumber" type="text"
                    value="<%= licenseNumber %>" placeholder="e.g. D1234567" />
@@ -133,9 +133,13 @@ if (roles != null) {
   <script>
     const driverCheckbox = document.getElementById('driverCheckbox');
     const licenseField   = document.getElementById('licenseField');
-    driverCheckbox.addEventListener('change', function () {
-      licenseField.style.display = this.checked ? 'block' : 'none';
-    });
+
+    function syncLicenseFieldVisibility() {
+      licenseField.style.display = driverCheckbox.checked ? 'block' : 'none';
+    }
+
+    syncLicenseFieldVisibility();
+    driverCheckbox.addEventListener('change', syncLicenseFieldVisibility);
   </script>
 </body>
 </html>
