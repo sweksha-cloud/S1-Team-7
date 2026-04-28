@@ -164,4 +164,8 @@
     gap: 12px;
     align-items: flex-start;
   }
+
+  .d-none { display: none; }
+.d-block { display: block; }
+
 }
