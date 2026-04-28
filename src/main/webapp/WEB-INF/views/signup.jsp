@@ -40,10 +40,11 @@ if (roles != null) {
   <title>Signup | UniRide</title>
   <link rel="stylesheet" href="<%= cp %>/assets/css/common.css?v=20260427" />
   <link rel="stylesheet" href="<%= cp %>/assets/css/home.css?v=20260427" />
+  <link rel="stylesheet" href="<%= cp %>/assets/css/dashboard.css?v=20260427" />
   <link rel="stylesheet" href="<%= cp %>/assets/css/signup.css?v=20260427" />
 </head>
 <body>
-  <div class="signup-page">
+  <div class="signup-page dashboard-page auth-page">
     <nav class="navbar">
       <h1 class="logo"><a href="<%= cp %>/home">Uni<span class="highlight">Ride</span></a></h1>
       <div class="nav-links">
@@ -51,8 +52,16 @@ if (roles != null) {
       </div>
     </nav>
 
-    <section class="signup-hero">
-      <div class="signup-shell">
+    <section class="signup-hero auth-hero">
+      <div class="auth-copy">
+        <span class="campus-tag">Join UniRide</span>
+        <h2>Create an account that matches your role.</h2>
+        <p>
+          Register once to ride as a passenger, drive, or both. Your account stays consistent across the site.
+        </p>
+      </div>
+
+      <div class="signup-shell auth-shell">
         <% if (successMessage != null) { %>
           <p class="signup-success"><%= successMessage %></p>
         <% } %>

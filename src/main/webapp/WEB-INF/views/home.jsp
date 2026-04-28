@@ -1,6 +1,15 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="model.User" %>
 <%
 String cp = request.getContextPath();
+User currentUser = (User) session.getAttribute("currentUser");
+String dashboardPath = cp + "/login";
+if (currentUser != null) {
+  dashboardPath = cp + "/dashboard/passenger";
+  if (currentUser.hasRole("driver")) {
+    dashboardPath = cp + "/dashboard/driver";
+  }
+}
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,7 +25,7 @@ String cp = request.getContextPath();
     <nav class="navbar">
       <h1 class="logo">Uni<span class="highlight">Ride</span></h1>
       <div class="nav-links">
-        <a class="nav-btn-secondary" href="<%= cp %>/login">Log In</a>
+        <a class="nav-btn-secondary" href="<%= dashboardPath %>">Dashboard</a>
         <a class="nav-btn-primary" href="<%= cp %>/signup">Sign Up</a>
       </div>
     </nav>

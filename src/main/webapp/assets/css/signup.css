@@ -1,8 +1,12 @@
 .signup-page {
   min-height: 100vh;
-  background: var(--bg-light);
+  background: var(--bg-dark);
   display: flex;
   flex-direction: column;
+}
+
+.auth-page {
+  color: var(--text-main);
 }
 
 .signup-shell {
@@ -20,16 +24,50 @@
 }
 
 .signup-hero {
-  padding: var(--spacing-2xl) var(--spacing-lg);
+  padding: 4rem 10%;
   display: grid;
-  place-items: center;
-  background: var(--bg-gray);
+  grid-template-columns: minmax(0, 1.1fr) minmax(340px, 0.9fr);
+  gap: var(--spacing-4xl);
+  align-items: center;
+  background:
+    radial-gradient(circle at top left, rgba(229, 168, 35, 0.10), transparent 30%),
+    radial-gradient(circle at top right, rgba(0, 85, 162, 0.14), transparent 35%),
+    var(--bg-dark);
   flex: 1;
+}
+
+.auth-copy {
+  max-width: 580px;
+}
+
+.auth-copy h2 {
+  margin: 0 0 var(--spacing-xl);
+  color: var(--text-main);
+  font-size: clamp(2.2rem, 4vw, 3.8rem);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+}
+
+.auth-copy p {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: var(--font-size-lg);
+  line-height: 1.7;
+  max-width: 540px;
+}
+
+.auth-shell {
+  justify-self: end;
+  width: min(560px, 100%);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
 }
 
 .signup-header h2 {
   margin: 0 0 var(--spacing-sm);
-  color: var(--text-primary);
+  color: var(--text-main);
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
 }
@@ -54,7 +92,7 @@
 .signup-form label,
 .role-selector legend {
   font-weight: var(--font-weight-semibold);
-  color: var(--text-primary);
+  color: var(--text-main);
   font-size: var(--font-size-sm);
 }
 
@@ -62,10 +100,10 @@
 .signup-form select {
   width: 100%;
   padding: var(--spacing-md);
-  border: 1px solid var(--border-gray);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  background: var(--bg-white);
-  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
   font-size: var(--font-size-base);
   font-family: var(--font-family);
   transition: border-color var(--transition-base), box-shadow var(--transition-base);
@@ -74,19 +112,20 @@
 .signup-form input:focus,
 .signup-form select:focus {
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  border-color: var(--sjsu-gold);
+  box-shadow: 0 0 0 3px rgba(229, 168, 35, 0.16);
 }
 
 .role-selector {
   margin: var(--spacing-xs) 0;
-  border: 1px solid var(--border-gray);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: var(--spacing-lg);
   display: flex;
   gap: var(--spacing-xl);
   align-items: center;
   flex-wrap: wrap;
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .role-selector label {
@@ -105,7 +144,7 @@
 .password-strength {
   margin: var(--spacing-xs) 0 0;
   font-size: var(--font-size-sm);
-  color: #0369a1;
+  color: var(--sjsu-gold);
 }
 
 .signup-submit {
@@ -123,7 +162,7 @@
 
 .signup-submit:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 14px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 8px 14px rgba(229, 168, 35, 0.18);
 }
 
 .signup-success {
@@ -141,6 +180,16 @@
   .signup-shell {
     padding: var(--spacing-xl);
     border-radius: var(--radius-md);
+  }
+
+  .signup-hero {
+    grid-template-columns: 1fr;
+    padding: 2rem 1rem 3rem;
+  }
+
+  .auth-shell {
+    justify-self: stretch;
+    width: 100%;
   }
 
   .name-row {

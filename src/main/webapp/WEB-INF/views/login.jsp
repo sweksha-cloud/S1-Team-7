@@ -16,10 +16,11 @@ if (email == null) {
   <title>Login | UniRide</title>
   <link rel="stylesheet" href="<%= cp %>/assets/css/common.css?v=20260427" />
   <link rel="stylesheet" href="<%= cp %>/assets/css/home.css?v=20260427" />
+  <link rel="stylesheet" href="<%= cp %>/assets/css/dashboard.css?v=20260427" />
   <link rel="stylesheet" href="<%= cp %>/assets/css/login.css?v=20260427" />
 </head>
 <body>
-  <div class="login-page">
+  <div class="login-page dashboard-page auth-page">
     <nav class="navbar">
       <h1 class="logo"><a href="<%= cp %>/home">Uni<span class="highlight">Ride</span></a></h1>
       <div class="nav-links">
@@ -27,8 +28,16 @@ if (email == null) {
       </div>
     </nav>
 
-    <section class="login-hero">
-      <div class="login-shell">
+    <section class="login-hero auth-hero">
+      <div class="auth-copy">
+        <span class="campus-tag">Welcome back</span>
+        <h2>Sign in to continue your rides.</h2>
+        <p>
+          Use your UniRide account to find rides, manage your dashboard, and keep your trips organized.
+        </p>
+      </div>
+
+      <div class="login-shell auth-shell">
         <header class="login-header">
           <h2>Log In to UniRide</h2>
         </header>

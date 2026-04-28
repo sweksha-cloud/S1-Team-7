@@ -130,6 +130,42 @@
   text-align: left;
 }
 
+.settings-hero {
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+  align-items: stretch;
+}
+
+.settings-quick-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-2xl);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
+}
+
+.settings-quick-card h3 {
+  margin: 0 0 var(--spacing-lg);
+}
+
+.settings-quick-card p {
+  margin: 0 0 var(--spacing-md);
+  display: grid;
+  gap: var(--spacing-xs);
+}
+
+.settings-quick-card strong {
+  color: var(--text-dim);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.settings-quick-card span {
+  color: var(--text-main);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+}
+
 .dashboard-hero {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
@@ -163,12 +199,17 @@
   margin: 0;
 }
 
+.dashboard-passenger-section {
+  padding-top: 0;
+}
+
 .dashboard-actions {
   display: flex;
   flex-wrap: nowrap;
   gap: var(--spacing-lg);
   width: 100%;
   justify-self: end;
+  align-items: stretch;
 }
 
 .dashboard-section h2,
@@ -191,6 +232,12 @@
   color: var(--text-dim);
   margin: 0;
   line-height: 1.6;
+}
+
+.settings-panel {
+  width: 100%;
+  max-width: none;
+  margin: 0 auto;
 }
 
 .dashboard-empty {
@@ -389,6 +436,69 @@
   gap: var(--spacing-lg);
 }
 
+.settings-form .form-group {
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+.settings-form .login-input {
+  width: 100%;
+}
+
+.settings-form .login-submit {
+  margin-top: var(--spacing-md);
+}
+
+.settings-form small {
+  color: var(--text-dim);
+  margin-top: 0;
+  display: block;
+  line-height: 1.6;
+}
+
+.settings-form label {
+  color: var(--text-main);
+}
+
+.settings-form .login-input {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text-main);
+  border-color: var(--border-color);
+}
+
+.settings-form .login-input:disabled {
+  opacity: 1;
+  -webkit-text-fill-color: var(--text-main);
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.settings-message {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.settings-update-btn {
+  width: 100%;
+  max-width: 420px;
+}
+
+.settings-danger-wrap {
+  max-width: none;
+  margin-top: var(--spacing-4xl);
+  text-align: left;
+}
+
+.settings-danger-wrap h3 {
+  margin-bottom: var(--spacing-sm);
+}
+
+.settings-danger-wrap p {
+  margin: 0 0 var(--spacing-xl);
+  color: var(--text-dim);
+  line-height: 1.7;
+  max-width: 720px;
+}
+
 .settings-form small {
   display: block;
   color: var(--text-dim);
@@ -417,6 +527,14 @@
   .dashboard-actions {
     justify-self: stretch;
   }
+
+  .dashboard-passenger-section {
+    padding-top: 4rem;
+  }
+
+  .settings-panel {
+    max-width: none;
+  }
 }
 
 @media (max-width: 640px) {
@@ -434,8 +552,16 @@
     padding-right: 0;
   }
 
+  .dashboard-passenger-section {
+    padding-top: 2rem;
+  }
+
   .dashboard-section {
     padding: 2rem 1rem 3rem;
+  }
+
+  .settings-update-btn {
+    width: 100%;
   }
 
   .dashboard-actions {

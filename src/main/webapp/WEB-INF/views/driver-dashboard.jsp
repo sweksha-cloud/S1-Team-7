@@ -7,6 +7,7 @@ String cp = request.getContextPath();
 User currentUser = (User) session.getAttribute("currentUser");
 List<Vehicle> vehicles = (List<Vehicle>) request.getAttribute("vehicles");
 boolean pending = request.getAttribute("pendingVerification") != null;
+boolean canSwapDashboard = currentUser != null && currentUser.hasRole("driver") && currentUser.hasRole("passenger");
 if (vehicles == null) {
   vehicles = java.util.Collections.emptyList();
 }
@@ -29,6 +30,9 @@ if (vehicles == null) {
       <div class="nav-links dashboard-nav-links">
         <span class="dashboard-welcome">Welcome <%= currentUser != null ? currentUser.getFirstName() : "Driver" %></span>
         <a href="<%= cp %>/settings" class="nav-btn-primary dashboard-settings">Settings</a>
+        <% if (canSwapDashboard) { %>
+          <a href="<%= cp %>/dashboard/passenger" class="nav-btn-secondary">Switch to Passenger</a>
+        <% } %>
         <form method="post" action="<%= cp %>/logout" class="dashboard-inline-form">
           <button type="submit" class="nav-btn-secondary dashboard-signout">Sign Out</button>
         </form>
