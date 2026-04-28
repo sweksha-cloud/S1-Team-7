@@ -120,7 +120,7 @@ if (roles != null) {
           <% if (request.getAttribute("errorRoles") != null) { %><p class="field-error"><%= request.getAttribute("errorRoles") %></p><% } %>
 
           <%-- License number field — shown only when Driver is selected --%>
-          <div id="licenseField" style="display: <%= roleDriver ? "block" : "none" %>;">
+          <div id="licenseField" class="<%= roleDriver ? "d-block" : "d-none" %>">
             <label for="licenseNumber">Driver's License Number</label>
             <input id="licenseNumber" name="licenseNumber" type="text"
                    value="<%= licenseNumber %>" placeholder="e.g. D1234567" />
