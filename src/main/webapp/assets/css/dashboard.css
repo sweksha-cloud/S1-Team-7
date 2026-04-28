@@ -9,15 +9,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--spacing-lg) var(--spacing-2xl);
-  background: var(--bg-white);
-  border-bottom: 1px solid var(--border-light);
+  padding: var(--spacing-2xl) 10%;
+  background: var(--bg-dark);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .navbar .logo {
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-extrabold);
-  color: var(--text-primary);
+  color: var(--text-main);
 }
 
 .navbar .logo a {
@@ -29,6 +29,49 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-xl);
+}
+
+.dashboard-page .nav-btn-secondary {
+  background: none;
+  border: 1px solid #444;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  font-size: var(--font-size-base);
+}
+
+.dashboard-page .nav-btn-secondary:hover {
+  border-color: var(--sjsu-gold);
+  color: var(--sjsu-gold);
+}
+
+.dashboard-page .nav-btn-primary {
+  background: var(--text-white);
+  color: var(--bg-dark);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  border: none;
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.dashboard-page .nav-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 14px rgba(255, 255, 255, 0.15);
+}
+
+/* Ensure primary and secondary nav buttons inside dashboard header share the same sizing */
+.dashboard-nav-links .nav-btn-primary,
+.dashboard-nav-links .nav-btn-secondary {
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: var(--font-size-base);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  line-height: 1;
 }
 
 .dashboard-nav-links {
@@ -47,15 +90,14 @@
 
 .dashboard-signout {
   margin: 0;
-  padding: var(--spacing-md) var(--spacing-lg);
-  font-size: var(--font-size-sm);
 }
 
 .dashboard-settings {
   margin: 0;
-  padding: var(--spacing-md) var(--spacing-lg);
-  font-size: var(--font-size-sm);
-  background-color: var(--secondary-color) !important;
+}
+
+.dashboard-back-home {
+  margin: 0;
 }
 
 .dashboard-main {

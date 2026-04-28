@@ -8,8 +8,8 @@ String cp = request.getContextPath();
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>UniRide</title>
-  <link rel="stylesheet" href="<%= cp %>/assets/css/common.css" />
-  <link rel="stylesheet" href="<%= cp %>/assets/css/home.css" />
+  <link rel="stylesheet" href="<%= cp %>/assets/css/common.css?v=20260427" />
+  <link rel="stylesheet" href="<%= cp %>/assets/css/home.css?v=20260427" />
 </head>
 <body>
   <div class="home-container">

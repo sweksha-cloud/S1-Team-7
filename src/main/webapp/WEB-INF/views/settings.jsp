@@ -10,19 +10,19 @@ User currentUser = (User) session.getAttribute("currentUser");
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Settings | UniRide</title>
-  <link rel="stylesheet" href="<%= cp %>/assets/css/common.css" />
-  <link rel="stylesheet" href="<%= cp %>/assets/css/home.css" />
-  <link rel="stylesheet" href="<%= cp %>/assets/css/login.css" />
-  <link rel="stylesheet" href="<%= cp %>/assets/css/dashboard.css" />
+  <link rel="stylesheet" href="<%= cp %>/assets/css/common.css?v=20260427" />
+  <link rel="stylesheet" href="<%= cp %>/assets/css/home.css?v=20260427" />
+  <link rel="stylesheet" href="<%= cp %>/assets/css/login.css?v=20260427" />
+  <link rel="stylesheet" href="<%= cp %>/assets/css/dashboard.css?v=20260427" />
 </head>
 <body>
   <div class="login-page dashboard-page">
     <nav class="navbar">
-      <h1 class="logo"><a href="<%= cp %>/home">UniRide</a></h1>
+      <h1 class="logo"><a href="<%= cp %>/home">Uni<span class="highlight">Ride</span></a></h1>
       <div class="nav-links dashboard-nav-links">
         <span class="dashboard-welcome">Welcome <%= currentUser != null ? currentUser.getFirstName() : "User" %></span>
         <form method="post" action="<%= cp %>/logout" class="dashboard-inline-form">
-          <button type="submit" class="login-submit dashboard-signout">Sign Out</button>
+          <button type="submit" class="nav-btn-secondary dashboard-signout">Sign Out</button>
         </form>
       </div>
     </nav>
@@ -85,7 +85,7 @@ User currentUser = (User) session.getAttribute("currentUser");
             </div>
 
             <button type="submit" class="login-submit" style="margin-top: 1rem;">Update Password</button>
-            <a href="<%= cp %>/home" class="login-submit" style="display: inline-block; margin-left: 0.5rem; text-align: center; text-decoration: none; background-color: #6c757d;">Back to Home</a>
+            <a href="<%= cp %>/home" class="nav-btn-secondary dashboard-back-home">Back to Home</a>
           </form>
         </div>
       </div>

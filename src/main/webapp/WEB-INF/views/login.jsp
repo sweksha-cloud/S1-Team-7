@@ -14,14 +14,14 @@ if (email == null) {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login | UniRide</title>
-  <link rel="stylesheet" href="<%= cp %>/assets/css/common.css" />
-  <link rel="stylesheet" href="<%= cp %>/assets/css/home.css" />
-  <link rel="stylesheet" href="<%= cp %>/assets/css/login.css" />
+  <link rel="stylesheet" href="<%= cp %>/assets/css/common.css?v=20260427" />
+  <link rel="stylesheet" href="<%= cp %>/assets/css/home.css?v=20260427" />
+  <link rel="stylesheet" href="<%= cp %>/assets/css/login.css?v=20260427" />
 </head>
 <body>
   <div class="login-page">
     <nav class="navbar">
-      <h1 class="logo">UniRide</h1>
+      <h1 class="logo"><a href="<%= cp %>/home">Uni<span class="highlight">Ride</span></a></h1>
       <div class="nav-links">
         <a class="nav-btn-secondary" href="<%= cp %>/home">Back to Home</a>
       </div>

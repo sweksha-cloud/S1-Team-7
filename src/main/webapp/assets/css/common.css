@@ -91,6 +91,17 @@ a:hover {
   color: var(--primary-dark);
 }
 
+/* Ensure nav logo text is white across all pages and highlighted part remains gold */
+.navbar .logo,
+.navbar .logo a {
+  color: var(--text-white);
+  text-decoration: none;
+}
+
+.navbar .logo .highlight {
+  color: var(--sjsu-gold);
+}
+
 /* ==================== UTILITY CLASSES ==================== */
 .form-group {
   display: grid;

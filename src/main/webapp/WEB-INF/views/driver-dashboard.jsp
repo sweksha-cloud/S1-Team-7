@@ -17,20 +17,20 @@ if (vehicles == null) {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Driver Dashboard | UniRide</title>
-  <link rel="stylesheet" href="<%= cp %>/assets/css/common.css" />
-  <link rel="stylesheet" href="<%= cp %>/assets/css/home.css" />
-  <link rel="stylesheet" href="<%= cp %>/assets/css/login.css" />
-  <link rel="stylesheet" href="<%= cp %>/assets/css/dashboard.css" />
+  <link rel="stylesheet" href="<%= cp %>/assets/css/common.css?v=20260427" />
+  <link rel="stylesheet" href="<%= cp %>/assets/css/home.css?v=20260427" />
+  <link rel="stylesheet" href="<%= cp %>/assets/css/login.css?v=20260427" />
+  <link rel="stylesheet" href="<%= cp %>/assets/css/dashboard.css?v=20260427" />
 </head>
 <body>
   <div class="login-page dashboard-page">
     <nav class="navbar">
-      <h1 class="logo"><a href="<%= cp %>/home">UniRide</a></h1>
+      <h1 class="logo"><a href="<%= cp %>/home">Uni<span class="highlight">Ride</span></a></h1>
       <div class="nav-links dashboard-nav-links">
         <span class="dashboard-welcome">Welcome <%= currentUser != null ? currentUser.getFirstName() : "Driver" %></span>
-        <a href="<%= cp %>/settings" class="login-submit dashboard-settings">Settings</a>
+        <a href="<%= cp %>/settings" class="nav-btn-primary dashboard-settings">Settings</a>
         <form method="post" action="<%= cp %>/logout" class="dashboard-inline-form">
-          <button type="submit" class="login-submit dashboard-signout">Sign Out</button>
+          <button type="submit" class="nav-btn-secondary dashboard-signout">Sign Out</button>
         </form>
       </div>
     </nav>
