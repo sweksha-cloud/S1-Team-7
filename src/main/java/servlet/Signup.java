@@ -34,12 +34,7 @@ public class Signup extends HttpServlet {
         String licenseNumber = safe(req.getParameter("licenseNumber"));
         String[] rolesArray  = req.getParameterValues("roles");
 
-        req.setAttribute("firstName",     firstName);
-        req.setAttribute("lastName",      lastName);
-        req.setAttribute("email",         email);
-        req.setAttribute("sjsuId",        sjsuId);
-        req.setAttribute("gender",        gender);
-        req.setAttribute("licenseNumber", licenseNumber);
+        // Do not populate form attributes here; only repopulate when there are errors
 
         if (firstName.isBlank())  req.setAttribute("errorFirstName", "First name is required.");
         if (lastName.isBlank())   req.setAttribute("errorLastName",  "Last name is required.");
@@ -79,12 +74,29 @@ public class Signup extends HttpServlet {
         }
 
         if (hasErrors(req)) {
+            // Preserve entered values so the user can correct errors
+            req.setAttribute("firstName",     firstName);
+            req.setAttribute("lastName",      lastName);
+            req.setAttribute("email",         email);
+            req.setAttribute("sjsuId",        sjsuId);
+            req.setAttribute("gender",        gender);
+            req.setAttribute("licenseNumber", licenseNumber);
+            // Preserve selected roles so checkboxes remain checked on error
+            if (rolesArray != null) req.setAttribute("roles", rolesArray);
             req.getRequestDispatcher("/WEB-INF/views/signup.jsp").forward(req, resp);
             return;
         }
 
         User user = AppStore.createUser(firstName, lastName, email, sjsuId, gender, password, roles, licenseNumber);
         if (user == null) {
+            // Keep entered values when reporting duplicate-email failure
+            req.setAttribute("firstName",     firstName);
+            req.setAttribute("lastName",      lastName);
+            req.setAttribute("email",         email);
+            req.setAttribute("sjsuId",        sjsuId);
+            req.setAttribute("gender",        gender);
+            req.setAttribute("licenseNumber", licenseNumber);
+            if (rolesArray != null) req.setAttribute("roles", rolesArray);
             req.setAttribute("errorEmail", "This email is already registered.");
             req.getRequestDispatcher("/WEB-INF/views/signup.jsp").forward(req, resp);
             return;
@@ -98,6 +110,8 @@ public class Signup extends HttpServlet {
         } else {
             req.setAttribute("successMessage", "Registration complete. Your account has been created.");
         }
+        // Clear form selections on success (no roles selected)
+        req.setAttribute("roles", new String[0]);
         req.getRequestDispatcher("/WEB-INF/views/signup.jsp").forward(req, resp);
     }
     

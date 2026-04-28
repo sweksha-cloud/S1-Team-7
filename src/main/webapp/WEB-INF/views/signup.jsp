@@ -8,7 +8,13 @@ String sjsuId        = (String) request.getAttribute("sjsuId");
 String gender        = (String) request.getAttribute("gender");
 String licenseNumber = (String) request.getAttribute("licenseNumber");
 String successMessage = (String) request.getAttribute("successMessage");
-String[] roles = request.getParameterValues("roles");
+Object rolesAttr = request.getAttribute("roles");
+String[] roles = null;
+if (rolesAttr instanceof String[]) {
+  roles = (String[]) rolesAttr;
+} else {
+  roles = request.getParameterValues("roles");
+}
 
 if (firstName     == null) firstName     = "";
 if (lastName      == null) lastName      = "";
@@ -47,6 +53,10 @@ if (roles != null) {
 
     <section class="signup-hero">
       <div class="signup-shell">
+        <% if (successMessage != null) { %>
+          <p class="signup-success"><%= successMessage %></p>
+        <% } %>
+
         <header class="signup-header">
           <h2>Create Your UniRide Account</h2>
         </header>
@@ -111,10 +121,6 @@ if (roles != null) {
           </div>
 
           <button class="signup-submit" type="submit">Create account</button>
-
-          <% if (successMessage != null) { %>
-            <p class="signup-success"><%= successMessage %></p>
-          <% } %>
         </form>
       </div>
     </section>
