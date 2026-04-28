@@ -61,10 +61,19 @@ public class DriverDashboard extends HttpServlet {
         String action = req.getParameter("action");
         if ("addVehicle".equals(action)) {
             String make = safe(req.getParameter("make"));
+            String model = safe(req.getParameter("model"));
             String color = safe(req.getParameter("color"));
             String plate = safe(req.getParameter("plate"));
-            if (!make.isBlank() && !color.isBlank() && !plate.isBlank()) {
-                AppStore.addVehicle(user.getEmail(), make, color, plate);
+            String totalSeats = safe(req.getParameter("totalSeats"));
+            if (!make.isBlank() && !model.isBlank() && !color.isBlank() && !plate.isBlank() && !totalSeats.isBlank()) {
+                try {
+                    int seats = Integer.parseInt(totalSeats);
+                    if (seats > 0) {
+                        AppStore.addVehicle(user.getEmail(), make, model, color, plate, seats);
+                    }
+                } catch (NumberFormatException ignored) {
+                    // Ignore invalid seat counts and fall through to the redirect.
+                }
             }
         }
 

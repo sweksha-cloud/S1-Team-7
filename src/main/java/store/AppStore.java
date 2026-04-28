@@ -222,7 +222,7 @@ public final class AppStore {
      */
     public static List<Vehicle> getVehiclesForOwner(String ownerEmail) {
         String sql =
-            "SELECT v.Vehicle_ID, v.Make, v.Color, v.License_Plate " +
+            "SELECT v.Vehicle_ID, v.Make, v.Model, v.Color, v.License_Plate, v.Total_Seats " +
             "FROM Vehicles v " +
             "JOIN Owns o ON o.Vehicle_ID = v.Vehicle_ID " +
             "JOIN Users u ON u.User_ID = o.User_ID " +
@@ -239,8 +239,10 @@ public final class AppStore {
                         String.valueOf(rs.getInt("Vehicle_ID")),
                         ownerEmail,
                         rs.getString("Make"),
+                        rs.getString("Model"),
                         rs.getString("Color"),
-                        rs.getString("License_Plate")
+                        rs.getString("License_Plate"),
+                        rs.getInt("Total_Seats")
                     ));
                 }
             }
@@ -256,12 +258,14 @@ public final class AppStore {
      *
      * @param ownerEmail driver email that should own the new vehicle
      * @param make vehicle make entered on the form
+     * @param model vehicle model entered on the form
      * @param color vehicle color entered on the form
      * @param plate license plate entered on the form
+     * @param totalSeats total seats entered on the form
      */
-    public static void addVehicle(String ownerEmail, String make, String color, String plate) {
+    public static void addVehicle(String ownerEmail, String make, String model, String color, String plate, int totalSeats) {
         String insertVehicle =
-            "INSERT INTO Vehicles (License_Plate, Make, Color) VALUES (?, ?, ?)";
+            "INSERT INTO Vehicles (License_Plate, Make, Model, Color, Total_Seats) VALUES (?, ?, ?, ?, ?)";
         String insertOwns =
             "INSERT INTO Owns (User_ID, Vehicle_ID) " +
             "SELECT User_ID, ? FROM Users WHERE Email = ? AND Account_Status = 'active'";
@@ -272,7 +276,9 @@ public final class AppStore {
                     insertVehicle, Statement.RETURN_GENERATED_KEYS)) {
                 pv.setString(1, plate);
                 pv.setString(2, make);
-                pv.setString(3, color);
+                pv.setString(3, model);
+                pv.setString(4, color);
+                pv.setInt(5, totalSeats);
                 pv.executeUpdate();
                 try (ResultSet keys = pv.getGeneratedKeys()) {
                     if (!keys.next()) throw new SQLException("No generated key for vehicle");

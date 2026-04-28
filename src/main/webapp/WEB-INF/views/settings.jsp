@@ -95,6 +95,17 @@ User currentUser = (User) session.getAttribute("currentUser");
             <button type="submit" class="login-submit" style="margin-top: 1rem;">Update Password</button>
           </form>
 
+          <div class="dashboard-danger-wrap settings-danger-wrap">
+            <h3 style="margin-top: 0; margin-bottom: 1rem;">Delete Account</h3>
+            <p style="margin-top: 0; color: #666; line-height: 1.6; max-width: 720px;">
+              This permanently removes your account and all related access. You will need to create a new account to use UniRide again.
+            </p>
+            <form method="post" action="<%= cp %>/delete-account"
+                  onsubmit="return confirm('Are you sure you want to delete your account?');">
+              <button type="submit" class="dashboard-danger-btn">Delete Account</button>
+            </form>
+          </div>
+
           <% // When the form returns with feedback, bring the form back into view so the message is visible immediately. %>
           <% boolean hasMsgs = request.getAttribute("successMessage") != null ||
                             request.getAttribute("errorCurrentPassword") != null ||

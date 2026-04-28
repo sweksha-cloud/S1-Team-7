@@ -1,9 +1,12 @@
 .dashboard-page {
-  /* Keep dashboard-based screens full height so the header, content, and spacing read as one shell. */
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: var(--bg-light);
+  color: var(--text-main);
+  background:
+    radial-gradient(circle at top left, rgba(229, 168, 35, 0.10), transparent 30%),
+    radial-gradient(circle at top right, rgba(0, 85, 162, 0.14), transparent 35%),
+    var(--bg-dark);
 }
 
 .navbar {
@@ -103,77 +106,105 @@
 }
 
 .dashboard-main {
-  /* Center the main area below the nav while keeping content anchored near the top for long forms. */
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: var(--spacing-4xl);
-  padding-bottom: var(--spacing-4xl);
+  padding: 0;
 }
 
 .dashboard-main-inner {
-  /* Stack dashboard content vertically and let individual panels decide their own width. */
   display: flex;
   flex-direction: column;
-  align-items: center;
   width: 100%;
-  padding: var(--spacing-xl);
+  gap: 0;
 }
 
-/* Settings uses the dashboard shell but intentionally skips the card treatment so the form feels lighter. */
 .settings-full {
   width: 100%;
   max-width: none;
   background: transparent;
   border: none;
-  padding: var(--spacing-3xl) var(--spacing-xl);
+  padding: 0;
   box-shadow: none;
   text-align: left;
 }
 
-.dashboard-actions {
-  /* Two-column action tiles keep the primary dashboard actions visually balanced on wider screens. */
+.dashboard-hero {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+  gap: var(--spacing-4xl);
+  align-items: center;
+}
+
+.dashboard-section {
+  width: 100%;
+  padding: 4rem 10%;
+  box-sizing: border-box;
+}
+
+.dashboard-hero-copy {
+  padding-right: var(--spacing-xl);
+}
+
+.dashboard-hero-copy h2 {
+  font-size: clamp(2.2rem, 4vw, 3.8rem);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  margin: 0 0 var(--spacing-xl);
+  color: var(--text-main);
+}
+
+.dashboard-hero-copy p {
+  max-width: 560px;
+  color: var(--text-dim);
+  font-size: var(--font-size-lg);
+  line-height: 1.7;
+  margin: 0;
+}
+
+.dashboard-actions {
+  display: flex;
+  flex-wrap: nowrap;
   gap: var(--spacing-lg);
   width: 100%;
-  max-width: 600px;
-  margin-bottom: var(--spacing-4xl);
+  justify-self: end;
 }
 
-.dashboard-card {
-  /* Cards provide a readable surface for search, forms, and account controls inside the dashboard shell. */
-  width: 100%;
-  max-width: 600px;
-  text-align: left;
-  margin: 0 auto;
-  background: var(--bg-white);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-2xl);
-}
-
-.dashboard-card h2,
-.dashboard-card h3 {
-  text-align: center;
+.dashboard-section h2,
+.dashboard-section h3 {
   margin-top: 0;
   margin-bottom: var(--spacing-2xl);
-  color: var(--text-primary);
+  color: var(--text-main);
   font-weight: var(--font-weight-bold);
+}
+
+.dashboard-section-heading {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.dashboard-section-heading h3 {
+  margin-bottom: var(--spacing-sm);
+}
+
+.dashboard-section-heading p {
+  color: var(--text-dim);
+  margin: 0;
+  line-height: 1.6;
 }
 
 .dashboard-empty {
   text-align: center;
-  color: var(--text-secondary);
+  color: var(--text-dim);
   padding: var(--spacing-2xl);
 }
 
 .vehicle-row {
   display: flex;
   justify-content: space-between;
+  gap: var(--spacing-xl);
   padding: var(--spacing-lg) 0;
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-color);
   align-items: center;
 }
 
@@ -181,51 +212,64 @@
   border-bottom: none;
 }
 
-.vehicle-row strong {
-  color: var(--text-primary);
-  font-weight: var(--font-weight-semibold);
+.vehicle-info {
+  min-width: 0;
 }
 
-.vehicle-plate {
-  color: var(--text-secondary);
+.vehicle-row strong {
+  display: block;
+  color: var(--text-main);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-xs);
+}
+
+.vehicle-meta {
+  color: var(--text-dim);
   font-size: var(--font-size-sm);
   display: block;
-  margin-top: var(--spacing-xs);
+  line-height: 1.5;
 }
 
 .vehicle-delete {
-  background: transparent;
-  border: none;
-  color: var(--danger-color);
+  background: rgba(229, 168, 35, 0.08);
+  border: 1px solid rgba(229, 168, 35, 0.35);
+  color: var(--sjsu-gold);
   cursor: pointer;
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   padding: var(--spacing-md);
-  transition: color var(--transition-base);
+  border-radius: var(--radius-md);
+  transition: transform var(--transition-base), background-color var(--transition-base), color var(--transition-base);
 }
 
 .vehicle-delete:hover {
-  color: #dc2626;
+  background: rgba(229, 168, 35, 0.16);
+  transform: translateY(-1px);
+  color: #fff;
 }
 
 .dashboard-form-grid {
   margin-top: var(--spacing-2xl);
   display: grid;
   gap: var(--spacing-md);
+  max-width: 760px;
 }
 
 .dashboard-form-grid input {
   width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
   padding: var(--spacing-md);
-  border: 1px solid var(--border-gray);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   font-size: var(--font-size-base);
+  font-family: var(--font-family);
 }
 
 .dashboard-add-vehicle {
   margin: 0;
-  background: var(--primary-color);
-  color: var(--text-white);
+  background: var(--text-main);
+  color: var(--bg-dark);
   padding: var(--spacing-md) var(--spacing-lg);
   border: none;
   border-radius: var(--radius-md);
@@ -235,33 +279,33 @@
 }
 
 .dashboard-add-vehicle:hover {
-  background-color: var(--primary-dark);
+  background-color: var(--sjsu-gold);
   transform: translateY(-2px);
 }
 
 .dashboard-danger-wrap {
-  /* The destructive action is isolated so it stays visually separate from the primary dashboard controls. */
   margin-top: var(--spacing-4xl);
-  border-top: 1px solid var(--border-light);
+  border-top: 1px solid var(--border-color);
   padding-top: var(--spacing-2xl);
   text-align: center;
 }
 
 .dashboard-danger-btn {
   background-color: transparent;
-  color: var(--danger-color);
-  border: 1px solid var(--danger-color);
+  color: var(--text-dim);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   padding: var(--spacing-md) var(--spacing-lg);
   border-radius: var(--radius-md);
   cursor: pointer;
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
-  transition: background-color var(--transition-base), color var(--transition-base);
+  transition: background-color var(--transition-base), color var(--transition-base), border-color var(--transition-base);
 }
 
 .dashboard-danger-btn:hover {
-  background-color: var(--danger-color);
+  background-color: rgba(255, 255, 255, 0.06);
   color: var(--text-white);
+  border-color: var(--sjsu-gold);
 }
 
 .dashboard-search {
@@ -269,9 +313,11 @@
   padding: var(--spacing-md);
   margin-bottom: var(--spacing-2xl);
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-gray);
+  border: 1px solid var(--border-color);
   font-size: var(--font-size-base);
   font-family: var(--font-family);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
 }
 
 /* Dashboard Action Buttons */
@@ -282,14 +328,16 @@
 .action-find,
 .action-bookings {
   margin: 0;
-  padding: var(--spacing-lg) var(--spacing-xl);
-  border: none;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--radius-md);
   color: var(--text-white);
   font-weight: var(--font-weight-semibold);
   font-size: var(--font-size-base);
   cursor: pointer;
-  transition: transform var(--transition-base), box-shadow var(--transition-base), background-color var(--transition-base);
+  min-height: 72px;
+  text-align: left;
+  transition: transform var(--transition-base), box-shadow var(--transition-base), background-color var(--transition-base), border-color var(--transition-base);
 }
 
 .action-create,
@@ -306,45 +354,44 @@
 
 .action-requests,
 .action-bookings {
-  background-color: var(--primary-color);
+  background: rgba(0, 85, 162, 0.18);
 }
 
 .action-requests:hover,
 .action-bookings:hover {
-  background-color: var(--primary-dark);
+  background: rgba(0, 85, 162, 0.28);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
 }
 
 .action-earnings {
-  background-color: #a855f7;
+  background: rgba(229, 168, 35, 0.12);
 }
 
 .action-earnings:hover {
-  background-color: #9333ea;
+  background: rgba(229, 168, 35, 0.2);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.25);
+  box-shadow: 0 4px 12px rgba(229, 168, 35, 0.15);
 }
 
 .action-settings {
-  background-color: var(--secondary-color);
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 .action-settings:hover {
-  background-color: #5a6470;
+  background-color: rgba(255, 255, 255, 0.14);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.25);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.08);
 }
 
 .settings-form {
-  /* A simple grid keeps label, input, hint, and error messages aligned without extra markup. */
   display: grid;
   gap: var(--spacing-lg);
 }
 
 .settings-form small {
   display: block;
-  color: var(--text-secondary);
+  color: var(--text-dim);
   margin-top: var(--spacing-xs);
   font-size: var(--font-size-sm);
 }
@@ -352,31 +399,47 @@
 .settings-form hr {
   margin: var(--spacing-2xl) 0;
   border: none;
-  border-top: 1px solid var(--border-light);
+  border-top: 1px solid var(--border-color);
 }
 
 .settings-form h3 {
   margin-top: 0;
   margin-bottom: var(--spacing-xl);
-  color: var(--text-primary);
+  color: var(--text-main);
   font-weight: var(--font-weight-bold);
 }
 
+@media (max-width: 960px) {
+  .dashboard-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-actions {
+    justify-self: stretch;
+  }
+}
+
 @media (max-width: 640px) {
-  /* Collapse the header and action layouts so the dashboard remains usable on narrow screens. */
   .navbar {
     padding: var(--spacing-md) var(--spacing-lg);
     flex-wrap: wrap;
     gap: var(--spacing-md);
   }
 
-  .dashboard-actions {
-    grid-template-columns: 1fr;
+  .dashboard-main {
+    padding: 0;
   }
 
-  .dashboard-card {
-    max-width: 100%;
-    padding: var(--spacing-xl);
+  .dashboard-hero-copy {
+    padding-right: 0;
+  }
+
+  .dashboard-section {
+    padding: 2rem 1rem 3rem;
+  }
+
+  .dashboard-actions {
+    flex-direction: column;
   }
 
   .nav-links {
@@ -385,5 +448,14 @@
 
   .dashboard-welcome {
     display: none;
+  }
+
+  .vehicle-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .vehicle-delete {
+    width: 100%;
   }
 }

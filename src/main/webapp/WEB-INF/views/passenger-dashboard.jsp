@@ -45,13 +45,6 @@ User currentUser = (User) session.getAttribute("currentUser");
             <p>No active rides found for your search.</p>
           </div>
 
-          <div class="dashboard-danger-wrap">
-            <form method="post" action="<%= cp %>/delete-account" onsubmit="return confirm('Are you sure you want to delete your account?');">
-              <button type="submit" class="dashboard-danger-btn">
-                Delete Account
-              </button>
-            </form>
-          </div>
         </div>
       </div>
     </div>

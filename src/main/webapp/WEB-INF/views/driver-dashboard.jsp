@@ -54,34 +54,40 @@ if (vehicles == null) {
                 Go to Passenger Dashboard
               </a>
             </div>
-            <div class="dashboard-danger-wrap" style="margin-top: 2rem;">
-              <form method="post" action="<%= cp %>/delete-account"
-                    onsubmit="return confirm('Are you sure you want to delete your account?');">
-                <button type="submit" class="dashboard-danger-btn">Delete Account</button>
-              </form>
-            </div>
           </div>
 
         <% } else { %>
           <%-- Full driver dashboard --%>
-          <div class="dashboard-actions">
-            <button class="login-submit action-create"   type="button">Create a Ride</button>
-            <button class="login-submit action-requests" type="button">Passenger Requests</button>
-            <button class="login-submit action-earnings" type="button">My Earnings</button>
-            <button class="login-submit action-settings" type="button">Settings</button>
-          </div>
+          <section class="dashboard-hero dashboard-section">
+            <div class="dashboard-hero-copy">
+              <span class="campus-tag">Driver Hub</span>
+              <h2>Manage your rides and vehicles from one place.</h2>
+              <p>
+                Keep your car details updated, review driver tools, and stay ready for the next ride request.
+              </p>
+            </div>
+            <div class="dashboard-actions">
+              <button class="login-submit action-create"   type="button">Create a Ride</button>
+              <button class="login-submit action-requests" type="button">Passenger Requests</button>
+              <button class="login-submit action-earnings" type="button">My Earnings</button>
+            </div>
+          </section>
 
-          <div class="login-shell dashboard-card">
-            <h3>My Registered Vehicles</h3>
+          <section class="dashboard-section dashboard-vehicle-card">
+            <div class="dashboard-section-heading">
+              <h3>My Registered Vehicles</h3>
+              <p>Add each vehicle once and keep its details current for matching and pickup.</p>
+            </div>
 
             <% if (vehicles.isEmpty()) { %>
               <p class="dashboard-empty">No vehicles added yet.</p>
             <% } else { %>
               <% for (Vehicle vehicle : vehicles) { %>
                 <div class="vehicle-row">
-                  <div>
-                    <strong><%= vehicle.getColor() %> <%= vehicle.getMake() %></strong><br />
-                    <small class="vehicle-plate">Plate: <%= vehicle.getPlate() %></small>
+                  <div class="vehicle-info">
+                    <strong><%= vehicle.getColor() %> <%= vehicle.getMake() %> <%= vehicle.getModel() %></strong><br />
+                    <small class="vehicle-meta">Plate: <%= vehicle.getPlate() %></small>
+                    <small class="vehicle-meta">Total seats: <%= vehicle.getTotalSeats() %></small>
                   </div>
                   <form method="post" action="<%= cp %>/dashboard/driver" class="dashboard-inline-form">
                     <input type="hidden" name="action"    value="deleteVehicle" />
@@ -95,18 +101,14 @@ if (vehicles == null) {
             <form method="post" action="<%= cp %>/dashboard/driver" class="dashboard-form-grid">
               <input type="hidden" name="action" value="addVehicle" />
               <input type="text" name="make"  placeholder="Vehicle make (e.g. Toyota)" required />
+              <input type="text" name="model" placeholder="Vehicle model (e.g. Camry)" required />
               <input type="text" name="color" placeholder="Vehicle color"              required />
               <input type="text" name="plate" placeholder="License plate"              required />
+              <input type="number" name="totalSeats" placeholder="Total seats" min="1" required />
               <button class="login-submit dashboard-add-vehicle" type="submit">Add New Vehicle</button>
             </form>
 
-            <div class="dashboard-danger-wrap">
-              <form method="post" action="<%= cp %>/delete-account"
-                    onsubmit="return confirm('Are you sure you want to delete your account?');">
-                <button type="submit" class="dashboard-danger-btn">Delete Account</button>
-              </form>
-            </div>
-          </div>
+          </section>
         <% } %>
 
       </div>
