@@ -12,12 +12,23 @@ import java.io.IOException;
 
 /**
  * Driver dashboard for viewing and managing the current user's vehicles.
+ *
+ * The servlet keeps the vehicle list server-rendered so ownership checks and
+ * edits are enforced on the backend before the JSP is shown.
  */
 @WebServlet("/dashboard/driver")
 public class DriverDashboard extends HttpServlet {
+    /**
+     * Loads the driver's vehicles only after confirming the session is active.
+     *
+     * @param req current request used to read the session and expose vehicle data
+     * @param resp response used to redirect anonymous users
+     * @throws ServletException if the JSP dispatch fails
+     * @throws IOException if the redirect or forward cannot be written
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // Guard driver routes behind an authenticated session.
+        // Guard the route before any vehicle query runs.
         User user = (User) req.getSession(true).getAttribute("currentUser");
         if (user == null) {
             resp.sendRedirect(req.getContextPath() + "/login");
@@ -28,6 +39,16 @@ public class DriverDashboard extends HttpServlet {
         req.getRequestDispatcher("/WEB-INF/views/driver-dashboard.jsp").forward(req, resp);
     }
 
+    /**
+     * Handles the dashboard form actions that mutate vehicle data.
+     *
+     * The page uses one endpoint for multiple buttons, so the action parameter
+     * decides which database operation to run.
+     *
+     * @param req current form submission containing the action and fields
+     * @param resp response used to redirect anonymous users and refresh the view
+     * @throws IOException if the redirect cannot be written
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         User user = (User) req.getSession(true).getAttribute("currentUser");
@@ -36,7 +57,7 @@ public class DriverDashboard extends HttpServlet {
             return;
         }
 
-        // Single endpoint handles multiple button actions from the dashboard form.
+        // One endpoint keeps the form simple while still supporting multiple actions.
         String action = req.getParameter("action");
         if ("addVehicle".equals(action)) {
             String make = safe(req.getParameter("make"));
@@ -58,7 +79,10 @@ public class DriverDashboard extends HttpServlet {
     }
 
     /**
-     * Null-safe trim helper for request parameters.
+     * Normalizes form values before validation or persistence.
+     *
+     * @param value raw request parameter value
+     * @return a trimmed, non-null string
      */
     private String safe(String value) {
         return value == null ? "" : value.trim();

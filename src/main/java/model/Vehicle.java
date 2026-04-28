@@ -3,13 +3,10 @@ package model;
 import java.util.UUID;
 
 /**
- * Vehicle record associated with a driver account.
+ * Immutable vehicle record associated with a driver account.
  *
- * Two constructors:
- *  - Vehicle(ownerEmail, make, color, plate)  — used when adding a new vehicle
- *    (id is generated as a UUID placeholder until the DB row is persisted)
- *  - Vehicle(id, ownerEmail, make, color, plate) — used when loading from DB
- *    (id is the string form of the MySQL Vehicle_ID int)
+ * One constructor is used for newly entered data before persistence and the
+ * other reconstructs a row loaded back from MySQL.
  */
 public class Vehicle {
     private final String id;
@@ -18,7 +15,14 @@ public class Vehicle {
     private final String color;
     private final String plate;
 
-    /** Original constructor — kept so existing call sites still compile. */
+    /**
+     * Creates a new vehicle record before the database has assigned an integer id.
+     *
+     * @param ownerEmail email of the driver who owns the vehicle
+     * @param make vehicle make entered on the dashboard form
+     * @param color vehicle color entered on the dashboard form
+     * @param plate license plate stored with the vehicle row
+     */
     public Vehicle(String ownerEmail, String make, String color, String plate) {
         this.id = UUID.randomUUID().toString();
         this.ownerEmail = ownerEmail;
@@ -27,7 +31,15 @@ public class Vehicle {
         this.plate = plate;
     }
 
-    /** New constructor used by AppStore when loading rows from MySQL. */
+    /**
+     * Recreates a persisted vehicle row using the database id.
+     *
+     * @param id database vehicle identifier converted to a string
+     * @param ownerEmail email of the owning driver
+     * @param make vehicle make from the database row
+     * @param color vehicle color from the database row
+     * @param plate license plate from the database row
+     */
     public Vehicle(String id, String ownerEmail, String make, String color, String plate) {
         this.id = id;
         this.ownerEmail = ownerEmail;

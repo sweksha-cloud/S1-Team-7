@@ -1,4 +1,5 @@
 .dashboard-page {
+  /* Keep dashboard-based screens full height so the header, content, and spacing read as one shell. */
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -6,6 +7,7 @@
 }
 
 .navbar {
+  /* The shared top bar establishes the logged-in layout across driver, passenger, and settings screens. */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -101,6 +103,7 @@
 }
 
 .dashboard-main {
+  /* Center the main area below the nav while keeping content anchored near the top for long forms. */
   flex: 1;
   display: flex;
   justify-content: center;
@@ -110,6 +113,7 @@
 }
 
 .dashboard-main-inner {
+  /* Stack dashboard content vertically and let individual panels decide their own width. */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -117,7 +121,19 @@
   padding: var(--spacing-xl);
 }
 
+/* Settings uses the dashboard shell but intentionally skips the card treatment so the form feels lighter. */
+.settings-full {
+  width: 100%;
+  max-width: none;
+  background: transparent;
+  border: none;
+  padding: var(--spacing-3xl) var(--spacing-xl);
+  box-shadow: none;
+  text-align: left;
+}
+
 .dashboard-actions {
+  /* Two-column action tiles keep the primary dashboard actions visually balanced on wider screens. */
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--spacing-lg);
@@ -127,6 +143,7 @@
 }
 
 .dashboard-card {
+  /* Cards provide a readable surface for search, forms, and account controls inside the dashboard shell. */
   width: 100%;
   max-width: 600px;
   text-align: left;
@@ -223,6 +240,7 @@
 }
 
 .dashboard-danger-wrap {
+  /* The destructive action is isolated so it stays visually separate from the primary dashboard controls. */
   margin-top: var(--spacing-4xl);
   border-top: 1px solid var(--border-light);
   padding-top: var(--spacing-2xl);
@@ -319,6 +337,7 @@
 }
 
 .settings-form {
+  /* A simple grid keeps label, input, hint, and error messages aligned without extra markup. */
   display: grid;
   gap: var(--spacing-lg);
 }
@@ -344,6 +363,7 @@
 }
 
 @media (max-width: 640px) {
+  /* Collapse the header and action layouts so the dashboard remains usable on narrow screens. */
   .navbar {
     padding: var(--spacing-md) var(--spacing-lg);
     flex-wrap: wrap;

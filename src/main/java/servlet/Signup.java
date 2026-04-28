@@ -14,17 +14,41 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 @WebServlet("/signup")
+/**
+ * Handles account registration for users who may join as passengers, drivers,
+ * or both.
+ *
+ * The servlet performs all validation server-side so the JSP can simply echo
+ * request-scoped errors and preserve the user's input when the form is reloaded.
+ */
 public class Signup extends HttpServlet {
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
     private static final Pattern SJSU_ID_PATTERN = Pattern.compile("^\\d{9}$");
 
+    /**
+     * Renders the signup form.
+     *
+     * @param req current request
+     * @param resp response used to forward to the JSP
+     * @throws ServletException if the JSP dispatch fails
+     * @throws IOException if the response cannot be written
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.getRequestDispatcher("/WEB-INF/views/signup.jsp").forward(req, resp);
     }
 
+    /**
+     * Validates the signup form, creates the account, and returns feedback to the JSP.
+     *
+     * @param req current form submission
+     * @param resp response used to forward back to the form
+     * @throws ServletException if the JSP dispatch fails
+     * @throws IOException if the response cannot be written
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // Normalize once so all validation and persistence sees the same values.
         String firstName     = safe(req.getParameter("firstName"));
         String lastName      = safe(req.getParameter("lastName"));
         String email         = safe(req.getParameter("email")).toLowerCase();
@@ -34,7 +58,7 @@ public class Signup extends HttpServlet {
         String licenseNumber = safe(req.getParameter("licenseNumber"));
         String[] rolesArray  = req.getParameterValues("roles");
 
-        // Do not populate form attributes here; only repopulate when there are errors
+        // Leave form state untouched until validation decides whether the request should bounce back.
 
         if (firstName.isBlank())  req.setAttribute("errorFirstName", "First name is required.");
         if (lastName.isBlank())   req.setAttribute("errorLastName",  "Last name is required.");
@@ -68,13 +92,13 @@ public class Signup extends HttpServlet {
             req.setAttribute("errorRoles", "Please choose at least one registration type.");
         }
 
-        // Require license number if registering as a driver.
+        // Driver accounts need a license so the pending verification flow has the required data.
         if (roles.contains("driver") && licenseNumber.isBlank()) {
             req.setAttribute("errorLicense", "License number is required for drivers.");
         }
 
         if (hasErrors(req)) {
-            // Preserve entered values so the user can correct errors
+            // Preserve entered values so the user can correct errors without retyping everything.
             req.setAttribute("firstName",     firstName);
             req.setAttribute("lastName",      lastName);
             req.setAttribute("email",         email);
@@ -89,7 +113,7 @@ public class Signup extends HttpServlet {
 
         User user = AppStore.createUser(firstName, lastName, email, sjsuId, gender, password, roles, licenseNumber);
         if (user == null) {
-            // Keep entered values when reporting duplicate-email failure
+            // Keep entered values when reporting duplicate-email failure so the user only changes the conflicting field.
             req.setAttribute("firstName",     firstName);
             req.setAttribute("lastName",      lastName);
             req.setAttribute("email",         email);
@@ -102,7 +126,7 @@ public class Signup extends HttpServlet {
             return;
         }
 
-        // Tell the user their account is pending if they signed up as a driver.
+        // Driver registrations remain pending until an admin verifies the account.
         if (roles.contains("driver")) {
             req.setAttribute("successMessage",
                 "Registration complete! Your driver account is pending verification. " +
@@ -110,12 +134,18 @@ public class Signup extends HttpServlet {
         } else {
             req.setAttribute("successMessage", "Registration complete. Your account has been created.");
         }
-        // Clear form selections on success (no roles selected)
+        // Clear role selections on success so the rendered form does not imply a retry state.
         req.setAttribute("roles", new String[0]);
         req.getRequestDispatcher("/WEB-INF/views/signup.jsp").forward(req, resp);
     }
     
 
+    /**
+     * Detects whether any validation errors were attached to the request.
+     *
+     * @param req request containing field-specific validation attributes
+     * @return true when the form should be re-rendered with feedback
+     */
     private boolean hasErrors(HttpServletRequest req) {
         return req.getAttribute("errorFirstName") != null
             || req.getAttribute("errorLastName")  != null
@@ -127,6 +157,12 @@ public class Signup extends HttpServlet {
             || req.getAttribute("errorLicense")   != null;
     }
 
+    /**
+     * Normalizes request parameters so validation can safely inspect them.
+     *
+     * @param value raw request parameter value
+     * @return a trimmed, non-null string
+     */
     private String safe(String value) {
         return value == null ? "" : value.trim();
     }
