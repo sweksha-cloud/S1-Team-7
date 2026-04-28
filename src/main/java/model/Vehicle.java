@@ -16,6 +16,8 @@ public class Vehicle {
     private final String color;
     private final String plate;
     private final int totalSeats;
+    private final String insuranceNum;
+
 
     /**
      * Creates a new vehicle record before the database has assigned an integer id.
@@ -27,7 +29,7 @@ public class Vehicle {
      * @param plate license plate stored with the vehicle row
      * @param totalSeats total passenger seats entered on the dashboard form
      */
-    public Vehicle(String ownerEmail, String make, String model, String color, String plate, int totalSeats) {
+    public Vehicle(String ownerEmail, String make, String model, String color, String plate, int totalSeats, String insuranceNum) {
         this.id = UUID.randomUUID().toString();
         this.ownerEmail = ownerEmail;
         this.make = make;
@@ -35,7 +37,8 @@ public class Vehicle {
         this.color = color;
         this.plate = plate;
         this.totalSeats = totalSeats;
-    }
+        this.insuranceNum = insuranceNum;
+    }   
 
     /**
      * Recreates a persisted vehicle row using the database id.
@@ -48,7 +51,7 @@ public class Vehicle {
      * @param plate license plate from the database row
      * @param totalSeats total passenger seats from the database row
      */
-    public Vehicle(String id, String ownerEmail, String make, String model, String color, String plate, int totalSeats) {
+    public Vehicle(String id, String ownerEmail, String make, String model, String color, String plate, int totalSeats, String insuranceNum) {
         this.id = id;
         this.ownerEmail = ownerEmail;
         this.make = make;
@@ -56,6 +59,8 @@ public class Vehicle {
         this.color = color;
         this.plate = plate;
         this.totalSeats = totalSeats;
+        this.insuranceNum = insuranceNum;
+        
     }
 
     public String getId()         { return id; }
@@ -65,4 +70,6 @@ public class Vehicle {
     public String getColor()      { return color; }
     public String getPlate()      { return plate; }
     public int getTotalSeats()    { return totalSeats; }
+    public String getInsuranceNum() { return insuranceNum; }
+
 }
