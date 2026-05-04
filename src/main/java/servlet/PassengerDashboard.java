@@ -44,6 +44,7 @@ public class PassengerDashboard extends HttpServlet {
 
         // Load available rides for display
         req.setAttribute("availableRides", store.AppStore.getAvailableRides());
+        req.setAttribute("upcomingRides", AppStore.getUpcomingRidesForPassenger(user.getEmail()));
 
         req.getRequestDispatcher("/WEB-INF/views/passenger-dashboard.jsp").forward(req, resp);
     }
@@ -78,9 +79,16 @@ public class PassengerDashboard extends HttpServlet {
             String rideId = safe(req.getParameter("rideId"));
             if (!rideId.isBlank()) {
                 try {
-                    AppStore.createBookingForRide(user.getEmail(), Integer.parseInt(rideId));
+                    AppStore.requestSeatOnRide(user.getEmail(), Integer.parseInt(rideId));
                 } catch (NumberFormatException ignored) {
                 }
+            }
+        }
+
+        if ("cancelUpcomingRide".equals(action)) {
+            String bookingId = safe(req.getParameter("bookingId"));
+            if (!bookingId.isBlank()) {
+                AppStore.cancelUpcomingRideForPassenger(user.getEmail(), bookingId);
             }
         }
 

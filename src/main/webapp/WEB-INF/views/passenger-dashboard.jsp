@@ -4,6 +4,10 @@
 String cp = request.getContextPath();
 User currentUser = (User) session.getAttribute("currentUser");
 boolean canSwapDashboard = currentUser != null && currentUser.hasRole("driver") && currentUser.hasRole("passenger");
+java.util.List<model.UpcomingRide> upcomingRides = (java.util.List<model.UpcomingRide>) request.getAttribute("upcomingRides");
+if (upcomingRides == null) {
+  upcomingRides = java.util.Collections.emptyList();
+}
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -51,6 +55,58 @@ boolean canSwapDashboard = currentUser != null && currentUser.hasRole("driver") 
         </section>
 
         <section class="dashboard-section dashboard-passenger-section">
+          <div class="dashboard-section-heading">
+            <h3>Upcoming Rides</h3>
+            <p>Your pending or accepted rides are shown here. You can cancel before departure.</p>
+          </div>
+
+          <% if (upcomingRides.isEmpty()) { %>
+            <div class="dashboard-empty" style="margin-bottom: var(--spacing-2xl);">
+              <p>No upcoming rides yet.</p>
+            </div>
+          <% } else { %>
+            <div class="ride-list" style="margin-bottom: var(--spacing-2xl);">
+              <% for (model.UpcomingRide upcomingRide : upcomingRides) {
+                   String rawDeparture = upcomingRide.getDepartureDate();
+                   String formattedDeparture = rawDeparture;
+                   String formattedTime = "";
+                   try {
+                     DateTimeFormatter parser = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MMMM d, yyyy");
+                     DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mm a");
+                     LocalDateTime dt = LocalDateTime.parse(rawDeparture, parser);
+                     formattedDeparture = dt.format(dateFormatter);
+                     formattedTime = dt.format(timeFormatter);
+                   } catch (Exception ignored) {
+                   }
+              %>
+                <div class="ride-item">
+                  <div class="ride-row">
+                    <div class="ride-info">
+                      <strong><%= upcomingRide.getOrigin() %> → <%= upcomingRide.getDestination() %></strong><br />
+                      <small class="ride-meta">Booking ID: #<%= upcomingRide.getBookingId() %></small>
+                      <small class="ride-meta">Status: <%= upcomingRide.getBookingStatus() %></small>
+                      <small class="ride-meta">Driver: <%= upcomingRide.getDriverName() != null ? upcomingRide.getDriverName() : "Not assigned" %></small>
+                      <small class="ride-meta">Vehicle: <%= upcomingRide.getVehicleInfo() != null ? upcomingRide.getVehicleInfo() : "Not assigned" %></small>
+                      <small class="ride-meta">Departure: <%= formattedDeparture %></small>
+                      <% if (!formattedTime.isBlank()) { %>
+                        <small class="ride-meta">Time: <%= formattedTime %></small>
+                      <% } %>
+                      <small class="ride-meta">Seats: <%= upcomingRide.getSeats() %></small>
+                    </div>
+                    <div class="ride-actions request-actions">
+                      <form method="post" action="<%= cp %>/dashboard/passenger" class="dashboard-inline-form">
+                        <input type="hidden" name="action" value="cancelUpcomingRide" />
+                        <input type="hidden" name="bookingId" value="<%= upcomingRide.getBookingId() %>" />
+                        <button type="submit" class="request-decline">Cancel Ride</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              <% } %>
+            </div>
+          <% } %>
+
           <div class="dashboard-section-heading">
             <h3>Available Rides</h3>
             <p>Search results will appear here once rides are available for your route.</p>
@@ -108,7 +164,7 @@ boolean canSwapDashboard = currentUser != null && currentUser.hasRole("driver") 
                       <form method="post" action="<%= cp %>/dashboard/passenger" class="dashboard-inline-form">
                         <input type="hidden" name="action" value="processRideRequest" />
                         <input type="hidden" name="rideId" value="<%= ride.getId() %>" />
-                        <button type="submit" class="login-submit">Request</button>
+                        <button type="submit" class="request-approve">Request</button>
                       </form>
                     </div>
                   </div>
