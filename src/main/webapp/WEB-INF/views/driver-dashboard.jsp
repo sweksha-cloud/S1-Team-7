@@ -1,15 +1,17 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.time.LocalDateTime" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
+<%@ page import="model.PassengerRequest" %>
 <%@ page import="model.User" %>
-<%@ page import="model.Vehicle" %>
 <%
 String cp = request.getContextPath();
 User currentUser = (User) session.getAttribute("currentUser");
-List<Vehicle> vehicles = (List<Vehicle>) request.getAttribute("vehicles");
 boolean pending = request.getAttribute("pendingVerification") != null;
 boolean canSwapDashboard = currentUser != null && currentUser.hasRole("driver") && currentUser.hasRole("passenger");
-if (vehicles == null) {
-  vehicles = java.util.Collections.emptyList();
+List<PassengerRequest> passengerRequests = (List<PassengerRequest>) request.getAttribute("passengerRequests");
+if (passengerRequests == null) {
+  passengerRequests = java.util.Collections.emptyList();
 }
 %>
 <!DOCTYPE html>
@@ -76,51 +78,81 @@ if (vehicles == null) {
               <a href="<%= cp %>/dashboard/driver?action=showCreateRideForm" class="login-submit action-create" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
                 Create a Ride
               </a>
-              <button class="login-submit action-requests" type="button">Passenger Requests</button>
+              <a href="<%= cp %>/dashboard/driver?action=showVehicles" class="login-submit action-requests" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+                My Vehicles
+              </a>
               <button class="login-submit action-earnings" type="button">My Earnings</button>
             </div>
           </section>
 
           <section class="dashboard-section dashboard-vehicle-card">
             <div class="dashboard-section-heading">
-              <h3>My Registered Vehicles</h3>
-              <p>Add each vehicle once and keep its details current for matching and pickup.</p>
+              <h3>Passenger Requests</h3>
+              <p>Incoming requests appear here so you can review them directly from your dashboard.</p>
             </div>
 
-            <div class="vehicle-list-container">
-                <% if (vehicles.isEmpty()) { %>
-                  <p class="dashboard-empty">No vehicles added yet.</p>
-                <% } else { %>
-                  <% for (Vehicle vehicle : vehicles) { %>
-                    <div class="vehicle-row">
-                      <div class="vehicle-info">
-                        <strong><%= vehicle.getColor() %> <%= vehicle.getMake() %> <%= vehicle.getModel() %></strong><br />
-                        <small class="vehicle-meta">Plate: <%= vehicle.getPlate() %></small>
-                        <small class="vehicle-meta">Total seats: <%= vehicle.getTotalSeats() %></small>
+            <% if (passengerRequests.isEmpty()) { %>
+              <div class="dashboard-empty">
+                <p>No passenger requests yet.</p>
+              </div>
+            <% } else { %>
+              <div class="ride-list">
+                <% for (PassengerRequest requestRow : passengerRequests) {
+                     String rawDeparture = requestRow.getDepartureDate();
+                     String formattedDeparture = rawDeparture;
+                     String formattedDepartureTime = "";
+                     try {
+                       DateTimeFormatter parser = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                       LocalDateTime departureDt = LocalDateTime.parse(rawDeparture, parser);
+                       formattedDeparture = departureDt.format(DateTimeFormatter.ofPattern("MMMM d, yyyy"));
+                       formattedDepartureTime = departureDt.format(DateTimeFormatter.ofPattern("h:mm a"));
+                     } catch (Exception ignored) {
+                     }
+
+                     String rawRequestedAt = requestRow.getBookingTimestamp();
+                     String formattedRequestedAt = rawRequestedAt;
+                     try {
+                       DateTimeFormatter parser = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                       LocalDateTime requestedDt = LocalDateTime.parse(rawRequestedAt, parser);
+                       formattedRequestedAt = requestedDt.format(DateTimeFormatter.ofPattern("MMMM d, yyyy h:mm a"));
+                     } catch (Exception ignored) {
+                     }
+                %>
+                  <div class="ride-item">
+                    <div class="ride-row">
+                      <div class="ride-info">
+                        <strong><%= requestRow.getOrigin() %> -> <%= requestRow.getDestination() %></strong>
+                        <small class="ride-meta">Passenger: <%= requestRow.getPassengerName() %></small>
+                        <small class="ride-meta">Request ID: #<%= requestRow.getBookingId() %></small>
+                        <small class="ride-meta">Requested seats: <%= requestRow.getRequestedSeats() %></small>
+                        <small class="ride-meta">Departure: <%= formattedDeparture %></small>
+                        <% if (!formattedDepartureTime.isBlank()) { %>
+                          <small class="ride-meta">Departure time: <%= formattedDepartureTime %></small>
+                        <% } %>
+                        <small class="ride-meta">Requested at: <%= formattedRequestedAt %></small>
+                        <small class="ride-meta">Status: <%= requestRow.getBookingStatus() %></small>
                       </div>
-                      <form method="post" action="<%= cp %>/dashboard/driver" class="dashboard-inline-form">
-                        <input type="hidden" name="action"    value="deleteVehicle" />
-                        <input type="hidden" name="vehicleId" value="<%= vehicle.getId() %>" />
-                        <button type="submit" class="vehicle-delete">Delete</button>
-                      </form>
+                      <% if ("pending".equalsIgnoreCase(requestRow.getBookingStatus())) { %>
+                        <div class="ride-actions request-actions">
+                          <form method="post" action="<%= cp %>/dashboard/driver" class="dashboard-inline-form">
+                            <input type="hidden" name="action" value="processPassengerRequest" />
+                            <input type="hidden" name="bookingId" value="<%= requestRow.getBookingId() %>" />
+                            <input type="hidden" name="decision" value="accept" />
+                            <button type="submit" class="request-approve">Accept Request</button>
+                          </form>
+                          <form method="post" action="<%= cp %>/dashboard/driver" class="dashboard-inline-form">
+                            <input type="hidden" name="action" value="processPassengerRequest" />
+                            <input type="hidden" name="bookingId" value="<%= requestRow.getBookingId() %>" />
+                            <input type="hidden" name="decision" value="decline" />
+                            <button type="submit" class="request-decline">Decline</button>
+                          </form>
+                        </div>
+                      <% } %>
                     </div>
-                  <% } %>
+                  </div>
                 <% } %>
-            </div>
-
-            <%-- Centered Add Vehicle Form --%>
-            <div class="vehicle-form-container">
-                <h4 style="margin-bottom: 1rem; color: var(--sjsu-gold);">Add a New Vehicle</h4>
-                <form method="post" action="<%= cp %>/dashboard/driver" class="dashboard-form-grid">
-                  <input type="hidden" name="action" value="addVehicle" />
-                  <input type="text" name="make"  class="login-input" placeholder="Vehicle make (e.g. Toyota)" required />
-                  <input type="text" name="model" class="login-input" placeholder="Vehicle model (e.g. Camry)" required />
-                  <input type="text" name="color" class="login-input" placeholder="Vehicle color"              required />
-                  <input type="text" name="plate" class="login-input" placeholder="License plate"              required />
-                  <input type="number" name="totalSeats" class="login-input" placeholder="Total seats" min="1" required />
-                  <button class="login-submit dashboard-add-vehicle" type="submit" style="width: 100%; margin-top: 1rem;">Add Vehicle</button>
-                </form>
-            </div>
+              </div>
+            <% } %>
 
           </section>
         <% } %>
@@ -128,5 +160,6 @@ if (vehicles == null) {
       </div>
     </div>
   </div>
+
 </body>
 </html>

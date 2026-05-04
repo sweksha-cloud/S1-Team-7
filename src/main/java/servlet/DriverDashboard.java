@@ -44,7 +44,13 @@ public class DriverDashboard extends HttpServlet {
             return;
         }
 
-        req.setAttribute("vehicles", AppStore.getVehiclesForOwner(user.getEmail()));
+        if ("showVehicles".equals(action)) {
+            req.setAttribute("vehicles", AppStore.getVehiclesForOwner(user.getEmail()));
+            req.getRequestDispatcher("/WEB-INF/views/driver-vehicles.jsp").forward(req, resp);
+            return;
+        }
+
+        req.setAttribute("passengerRequests", AppStore.getPassengerRequestsForDriver(user.getEmail()));
         req.getRequestDispatcher("/WEB-INF/views/driver-dashboard.jsp").forward(req, resp);
     }
 
@@ -81,7 +87,7 @@ public class DriverDashboard extends HttpServlet {
                     int seats = Integer.parseInt(seatsLeft);
                     // Standardize HTML T-separator for MySQL DATETIME
                     String sqlTimestamp = departureDate.replace("T", " ") + ":00";
-                    AppStore.createRide(origin, destination, sqlTimestamp, seats);
+                    AppStore.createRide(user.getEmail(), origin, destination, sqlTimestamp, seats);
                 } catch (NumberFormatException ignored) {}
             }
         }
@@ -112,6 +118,50 @@ public class DriverDashboard extends HttpServlet {
             if (!vehicleId.isBlank()) {
                 AppStore.deleteVehicle(user.getEmail(), vehicleId);
             }
+        }
+
+        if ("updateVehicle".equals(action)) {
+            String vehicleId = safe(req.getParameter("vehicleId"));
+            String make = safe(req.getParameter("make"));
+            String model = safe(req.getParameter("model"));
+            String color = safe(req.getParameter("color"));
+            String plate = safe(req.getParameter("plate"));
+            String totalSeats = safe(req.getParameter("totalSeats"));
+            String insuranceNum = safe(req.getParameter("insuranceNum"));
+
+            if (!vehicleId.isBlank() && !make.isBlank() && !model.isBlank() && !color.isBlank() && !plate.isBlank() && !totalSeats.isBlank()) {
+                try {
+                    int seats = Integer.parseInt(totalSeats);
+                    if (seats > 0) {
+                        AppStore.updateVehicle(user.getEmail(), vehicleId, make, model, color, plate, seats, insuranceNum);
+                    }
+                } catch (NumberFormatException ignored) {
+                    // Ignore invalid seat counts and fall through to the redirect.
+                }
+            }
+        }
+
+        if ("processPassengerRequest".equals(action)) {
+            String bookingId = safe(req.getParameter("bookingId"));
+            String decision = safe(req.getParameter("decision"));
+
+            if (!bookingId.isBlank()) {
+                String nextStatus = "";
+                if ("accept".equalsIgnoreCase(decision)) {
+                    nextStatus = "accepted";
+                } else if ("decline".equalsIgnoreCase(decision)) {
+                    nextStatus = "declined";
+                }
+
+                if (!nextStatus.isBlank()) {
+                    AppStore.updatePassengerRequestStatus(user.getEmail(), bookingId, nextStatus);
+                }
+            }
+        }
+
+        if ("addVehicle".equals(action) || "updateVehicle".equals(action) || "deleteVehicle".equals(action)) {
+            resp.sendRedirect(req.getContextPath() + "/dashboard/driver?action=showVehicles");
+            return;
         }
 
         resp.sendRedirect(req.getContextPath() + "/dashboard/driver");

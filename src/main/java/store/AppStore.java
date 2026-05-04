@@ -1,7 +1,9 @@
 package store;
 
 import db.DBConnection;
+import model.PassengerRequest;
 import model.User;
+import model.Ride;
 import model.Vehicle;
 
 import java.sql.*;
@@ -234,6 +236,31 @@ public final class AppStore {
         }
     }
 
+    public static void updateVehicle(String ownerEmail, String vehicleId, String make, String model,
+                                     String color, String plate, int totalSeats, String insuranceNum) {
+        String sql =
+            "UPDATE Vehicles v " +
+            "SET v.Make = ?, v.Model = ?, v.Color = ?, v.License_Plate = ?, v.Total_Seats = ?, v.Insurance_Num = ? " +
+            "WHERE v.Vehicle_ID = ? " +
+            "AND EXISTS (SELECT 1 FROM Owns o JOIN Users u ON u.User_ID = o.User_ID " +
+            "            WHERE o.Vehicle_ID = v.Vehicle_ID AND u.Email = ?)";
+
+        try (Connection c = DBConnection.get();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, make);
+            ps.setString(2, model);
+            ps.setString(3, color);
+            ps.setString(4, plate);
+            ps.setInt(5, totalSeats);
+            ps.setString(6, insuranceNum);
+            ps.setInt(7, Integer.parseInt(vehicleId));
+            ps.setString(8, ownerEmail);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("updateVehicle failed", e);
+        }
+    }
+
     public static void deleteVehicle(String ownerEmail, String vehicleId) {
         String sql =
             "DELETE v FROM Vehicles v " +
@@ -253,19 +280,285 @@ public final class AppStore {
 
     // --------------------------------------------------------------- rides
 
-    public static void createRide(String origin, String destination, String departureDate, int seatsLeft) {
-        String sql = "INSERT INTO Rides (Origin, Destination, Departure_Date, Seats_Left, Status) " +
-                     "VALUES (?, ?, ?, ?, 'open')";
+    public static void createBooking(String passengerEmail, String origin, String destination, String departureDate, int seatsLeft) {
+        String nextRideIdSql = "SELECT COALESCE(MAX(Ride_ID), 0) + 1 AS Next_Ride_ID FROM Rides";
+        String nextBookingIdSql = "SELECT COALESCE(MAX(Booking_ID), 0) + 1 AS Next_Booking_ID FROM Bookings";
+        String insertRide = "INSERT INTO Rides (Ride_ID, Origin, Destination, Departure_Date, Seats_Left, Status) " +
+                            "VALUES (?, ?, ?, ?, ?, 'open')";
+        String insertBooking = "INSERT INTO Bookings (Booking_ID, Booking_Timestamp, Status) VALUES (?, CURRENT_TIMESTAMP, 'pending')";
+        String linkBookingRide = "INSERT INTO Booking_Ride (Booking_ID, Ride_ID) VALUES (?, ?)";
+        String linkPassengerBooking =
+            "INSERT INTO Makes (User_ID, Booking_ID) " +
+            "SELECT u.User_ID, ? FROM Users u " +
+            "WHERE u.Email = ? AND u.Account_Status = 'active'";
+
+        try (Connection c = DBConnection.get()) {
+            c.setAutoCommit(false);
+
+            int rideId;
+            try (PreparedStatement rideIdStatement = c.prepareStatement(nextRideIdSql);
+                 ResultSet rideRows = rideIdStatement.executeQuery()) {
+                if (!rideRows.next()) {
+                    throw new SQLException("Unable to allocate ride id");
+                }
+                rideId = rideRows.getInt("Next_Ride_ID");
+            }
+
+            int bookingId;
+            try (PreparedStatement bookingIdStatement = c.prepareStatement(nextBookingIdSql);
+                 ResultSet bookingRows = bookingIdStatement.executeQuery()) {
+                if (!bookingRows.next()) {
+                    throw new SQLException("Unable to allocate booking id");
+                }
+                bookingId = bookingRows.getInt("Next_Booking_ID");
+            }
+
+            try (PreparedStatement rideStatement = c.prepareStatement(insertRide);
+                 PreparedStatement bookingStatement = c.prepareStatement(insertBooking);
+                 PreparedStatement linkStatement = c.prepareStatement(linkBookingRide);
+                 PreparedStatement makesStatement = c.prepareStatement(linkPassengerBooking)) {
+
+                rideStatement.setInt(1, rideId);
+                rideStatement.setString(2, origin);
+                rideStatement.setString(3, destination);
+                rideStatement.setString(4, departureDate);
+                rideStatement.setInt(5, seatsLeft);
+                rideStatement.executeUpdate();
+
+                bookingStatement.setInt(1, bookingId);
+                bookingStatement.executeUpdate();
+
+                linkStatement.setInt(1, bookingId);
+                linkStatement.setInt(2, rideId);
+                linkStatement.executeUpdate();
+
+                makesStatement.setInt(1, bookingId);
+                makesStatement.setString(2, passengerEmail);
+                if (makesStatement.executeUpdate() == 0) {
+                    throw new SQLException("No passenger row found for booking");
+                }
+
+                c.commit();
+            } catch (SQLException e) {
+                c.rollback();
+                throw e;
+            } finally {
+                c.setAutoCommit(true);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("createBooking failed", e);
+        }
+    }
+
+    public static void createBookingForRide(String passengerEmail, int rideId) {
+        String rideExistsSql =
+            "SELECT 1 FROM Rides WHERE Ride_ID = ? AND Status = 'open' LIMIT 1";
+        String nextBookingIdSql =
+            "SELECT COALESCE(MAX(Booking_ID), 0) + 1 AS Next_Booking_ID FROM Bookings";
+        String insertBooking =
+            "INSERT INTO Bookings (Booking_ID, Booking_Timestamp, Status) VALUES (?, CURRENT_TIMESTAMP, 'pending')";
+        String linkBookingRide =
+            "INSERT INTO Booking_Ride (Booking_ID, Ride_ID) VALUES (?, ?)";
+        String linkPassengerBooking =
+            "INSERT INTO Makes (User_ID, Booking_ID) " +
+            "SELECT u.User_ID, ? FROM Users u " +
+            "WHERE u.Email = ? AND u.Account_Status = 'active'";
+
+        try (Connection c = DBConnection.get()) {
+            c.setAutoCommit(false);
+
+            try (PreparedStatement rideExistsStatement = c.prepareStatement(rideExistsSql)) {
+                rideExistsStatement.setInt(1, rideId);
+                try (ResultSet rideExistsRows = rideExistsStatement.executeQuery()) {
+                    if (!rideExistsRows.next()) {
+                        throw new SQLException("Ride is not available for booking");
+                    }
+                }
+            }
+
+            int bookingId;
+            try (PreparedStatement bookingIdStatement = c.prepareStatement(nextBookingIdSql);
+                 ResultSet bookingRows = bookingIdStatement.executeQuery()) {
+                if (!bookingRows.next()) {
+                    throw new SQLException("Unable to allocate booking id");
+                }
+                bookingId = bookingRows.getInt("Next_Booking_ID");
+            }
+
+            try (PreparedStatement bookingStatement = c.prepareStatement(insertBooking);
+                 PreparedStatement linkStatement = c.prepareStatement(linkBookingRide);
+                 PreparedStatement makesStatement = c.prepareStatement(linkPassengerBooking)) {
+
+                bookingStatement.setInt(1, bookingId);
+                bookingStatement.executeUpdate();
+
+                linkStatement.setInt(1, bookingId);
+                linkStatement.setInt(2, rideId);
+                linkStatement.executeUpdate();
+
+                makesStatement.setInt(1, bookingId);
+                makesStatement.setString(2, passengerEmail);
+                if (makesStatement.executeUpdate() == 0) {
+                    throw new SQLException("No passenger row found for booking");
+                }
+
+                c.commit();
+            } catch (SQLException e) {
+                c.rollback();
+                throw e;
+            } finally {
+                c.setAutoCommit(true);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("createBookingForRide failed", e);
+        }
+    }
+
+    public static java.util.List<Ride> getAvailableRides() {
+        String sql =
+            "SELECT r.Ride_ID, r.Origin, r.Destination, r.Departure_Date, r.Seats_Left, r.Status, " +
+            "       CONCAT(u.First_Name, ' ', LEFT(u.Last_Name, 1), '.') AS Driver_Name, " +
+            "       (SELECT CONCAT(v.Color, ' ', v.Make, ' ', v.Model, ' (Plate ', v.License_Plate, ')') " +
+            "        FROM Owns o2 " +
+            "        JOIN Vehicles v ON v.Vehicle_ID = o2.Vehicle_ID " +
+            "        WHERE o2.User_ID = u.User_ID " +
+            "        ORDER BY v.Vehicle_ID ASC LIMIT 1) AS Vehicle_Info " +
+            "FROM Rides r " +
+            "JOIN Schedules s ON s.Ride_ID = r.Ride_ID " +
+            "JOIN Users u ON u.User_ID = s.User_ID " +
+            "WHERE r.Status = 'open' ORDER BY r.Departure_Date ASC";
+        try (Connection c = DBConnection.get();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            java.util.List<Ride> list = new java.util.ArrayList<>();
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new Ride(
+                        String.valueOf(rs.getInt("Ride_ID")),
+                        rs.getString("Origin"),
+                        rs.getString("Destination"),
+                        rs.getString("Departure_Date"),
+                        rs.getInt("Seats_Left"),
+                        rs.getString("Status"),
+                        rs.getString("Driver_Name"),
+                        rs.getString("Vehicle_Info")
+                    ));
+                }
+            }
+            return list;
+        } catch (SQLException e) {
+            throw new RuntimeException("getAvailableRides failed", e);
+        }
+    }
+
+    public static java.util.List<PassengerRequest> getPassengerRequestsForDriver(String driverEmail) {
+        String sql =
+            "SELECT b.Booking_ID, b.Status AS Booking_Status, b.Booking_Timestamp, " +
+            "       CONCAT(pu.First_Name, ' ', LEFT(pu.Last_Name, 1), '.') AS Passenger_Name, " +
+            "       r.Origin, r.Destination, r.Departure_Date, r.Seats_Left " +
+            "FROM Bookings b " +
+            "JOIN Booking_Ride br ON br.Booking_ID = b.Booking_ID " +
+            "JOIN Rides r ON r.Ride_ID = br.Ride_ID " +
+            "JOIN Schedules s ON s.Ride_ID = r.Ride_ID " +
+            "JOIN Users du ON du.User_ID = s.User_ID " +
+            "JOIN Makes m ON m.Booking_ID = b.Booking_ID " +
+            "JOIN Users pu ON pu.User_ID = m.User_ID " +
+            "WHERE du.Email = ? AND du.Account_Status = 'active' " +
+            "ORDER BY b.Booking_Timestamp DESC";
 
         try (Connection c = DBConnection.get();
              PreparedStatement ps = c.prepareStatement(sql)) {
-            
-            ps.setString(1, origin);
-            ps.setString(2, destination);
-            ps.setString(3, departureDate); 
-            ps.setInt(4, seatsLeft);
-            
-            ps.executeUpdate();
+            ps.setString(1, driverEmail);
+
+            java.util.List<PassengerRequest> list = new java.util.ArrayList<>();
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new PassengerRequest(
+                        String.valueOf(rs.getInt("Booking_ID")),
+                        rs.getString("Passenger_Name"),
+                        rs.getString("Origin"),
+                        rs.getString("Destination"),
+                        rs.getString("Departure_Date"),
+                        rs.getInt("Seats_Left"),
+                        rs.getString("Booking_Status"),
+                        rs.getString("Booking_Timestamp")
+                    ));
+                }
+            }
+
+            return list;
+        } catch (SQLException e) {
+            throw new RuntimeException("getPassengerRequestsForDriver failed", e);
+        }
+    }
+
+    public static boolean updatePassengerRequestStatus(String driverEmail, String bookingId, String newStatus) {
+        String sql =
+            "UPDATE Bookings b " +
+            "JOIN Booking_Ride br ON br.Booking_ID = b.Booking_ID " +
+            "JOIN Rides r ON r.Ride_ID = br.Ride_ID " +
+            "JOIN Schedules s ON s.Ride_ID = r.Ride_ID " +
+            "JOIN Users du ON du.User_ID = s.User_ID " +
+            "SET b.Status = ? " +
+            "WHERE b.Booking_ID = ? " +
+            "  AND du.Email = ? " +
+            "  AND du.Account_Status = 'active'";
+
+        try (Connection c = DBConnection.get();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, newStatus);
+            ps.setInt(2, Integer.parseInt(bookingId));
+            ps.setString(3, driverEmail);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException("updatePassengerRequestStatus failed", e);
+        }
+    }
+
+    public static void createRide(String driverEmail, String origin, String destination, String departureDate, int seatsLeft) {
+        String nextRideIdSql = "SELECT COALESCE(MAX(Ride_ID), 0) + 1 AS Next_Ride_ID FROM Rides";
+        String insertRide = "INSERT INTO Rides (Ride_ID, Origin, Destination, Departure_Date, Seats_Left, Status) " +
+                            "VALUES (?, ?, ?, ?, ?, 'open')";
+        String assignDriver =
+            "INSERT INTO Schedules (User_ID, Ride_ID) " +
+            "SELECT u.User_ID, ? FROM Users u " +
+            "JOIN Drivers d ON d.User_ID = u.User_ID " +
+            "WHERE u.Email = ? AND u.Account_Status = 'active'";
+
+        try (Connection c = DBConnection.get()) {
+            c.setAutoCommit(false);
+
+            int rideId;
+            try (PreparedStatement nextRideIdStatement = c.prepareStatement(nextRideIdSql);
+                 ResultSet nextRideIdRows = nextRideIdStatement.executeQuery()) {
+                if (!nextRideIdRows.next()) {
+                    throw new SQLException("Unable to allocate ride id");
+                }
+                rideId = nextRideIdRows.getInt("Next_Ride_ID");
+            }
+
+            try (PreparedStatement rideStatement = c.prepareStatement(insertRide, Statement.RETURN_GENERATED_KEYS)) {
+                rideStatement.setInt(1, rideId);
+                rideStatement.setString(2, origin);
+                rideStatement.setString(3, destination);
+                rideStatement.setString(4, departureDate);
+                rideStatement.setInt(5, seatsLeft);
+                rideStatement.executeUpdate();
+
+                try (PreparedStatement scheduleStatement = c.prepareStatement(assignDriver)) {
+                    scheduleStatement.setInt(1, rideId);
+                    scheduleStatement.setString(2, driverEmail);
+                    if (scheduleStatement.executeUpdate() == 0) {
+                        throw new SQLException("No driver row found for ride assignment");
+                    }
+                }
+
+                c.commit();
+            } catch (SQLException e) {
+                c.rollback();
+                throw e;
+            } finally {
+                c.setAutoCommit(true);
+            }
         } catch (SQLException e) {
             throw new RuntimeException("createRide failed", e);
         }
