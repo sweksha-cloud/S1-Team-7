@@ -48,17 +48,17 @@ if (passengerRequests == null) {
 
         <% if (pending) { %>
           <%-- Pending verification screen --%>
-          <div class="login-shell dashboard-card" style="text-align:center; padding: 2rem;">
+          <div class="login-shell dashboard-card dashboard-pending">
             <h3>Account Pending Verification</h3>
-            <p style="margin-top: 1rem;">
+            <p class="dashboard-pending-lead">
               Your driver account is currently under review. Once verified by an admin,
               you will have full access to the driver dashboard.
             </p>
-            <p style="margin-top: 0.5rem; color: #888;">
+            <p class="dashboard-pending-note">
               In the meantime, you can use UniRide as a passenger.
             </p>
-            <div style="margin-top: 1.5rem;">
-              <a href="<%= cp %>/dashboard/passenger" class="login-submit" style="text-decoration:none; padding: 0.6rem 1.2rem;">
+            <div class="dashboard-pending-cta">
+              <a href="<%= cp %>/dashboard/passenger" class="login-submit u-inline-flex-center">
                 Go to Passenger Dashboard
               </a>
             </div>
@@ -75,10 +75,10 @@ if (passengerRequests == null) {
               </p>
             </div>
             <div class="dashboard-actions">
-              <a href="<%= cp %>/dashboard/driver?action=showCreateRideForm" class="login-submit action-create" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+              <a href="<%= cp %>/dashboard/driver?action=showCreateRideForm" class="login-submit action-create u-inline-flex-center">
                 Create a Ride
               </a>
-              <a href="<%= cp %>/dashboard/driver?action=showVehicles" class="login-submit action-requests" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+              <a href="<%= cp %>/dashboard/driver?action=showVehicles" class="login-submit action-requests u-inline-flex-center">
                 My Vehicles
               </a>
               <button class="login-submit action-earnings" type="button">My Earnings</button>

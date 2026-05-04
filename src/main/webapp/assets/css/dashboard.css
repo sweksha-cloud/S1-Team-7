@@ -208,6 +208,21 @@
   margin-bottom: var(--spacing-2xl);
 }
 
+.dashboard-search-filters {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+  margin-bottom: var(--spacing-2xl);
+}
+
+.dashboard-search--text {
+  flex: 1 1 280px;
+}
+
+.dashboard-search--date {
+  flex: 0 1 220px;
+}
+
 .dashboard-passenger-section .dashboard-search {
   margin-bottom: 0;
 }
@@ -378,6 +393,141 @@
   border: 1px dashed #444;
 }
 
+.dashboard-empty--spaced {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.ride-list--spaced {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.dashboard-pending {
+  text-align: center;
+  padding: 2rem;
+}
+
+.dashboard-pending-lead {
+  margin-top: 1rem;
+}
+
+.dashboard-pending-note {
+  margin-top: 0.5rem;
+  color: var(--text-dim);
+}
+
+.dashboard-pending-cta {
+  margin-top: 1.5rem;
+}
+
+.vehicle-form-title {
+  margin-bottom: 1rem;
+  color: var(--sjsu-gold);
+}
+
+.vehicle-add {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.vehicle-add-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg) var(--spacing-2xl);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  color: var(--text-main);
+  cursor: pointer;
+  text-align: left;
+  transition: transform var(--transition-base), border-color var(--transition-base), background-color var(--transition-base);
+}
+
+.vehicle-add-toggle:hover {
+  transform: translateY(-1px);
+  border-color: rgba(229, 168, 35, 0.42);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.vehicle-add-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+}
+
+.vehicle-add-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(229, 168, 35, 0.35);
+  color: var(--sjsu-gold);
+  font-size: 18px;
+  line-height: 1;
+  flex: 0 0 auto;
+}
+
+.vehicle-add-panel {
+  margin-top: var(--spacing-lg);
+  padding: var(--spacing-2xl);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+}
+
+/* Add-vehicle form grid (multiple per row when expanded) */
+.vehicle-add-panel .dashboard-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-md);
+  align-items: start;
+  margin-top: 0;
+}
+
+.vehicle-add-panel .dashboard-form-grid input {
+  max-width: none;
+  width: 100%;
+}
+
+.vehicle-add-panel .dashboard-form-grid .dashboard-add-vehicle {
+  grid-column: 1 / -1;
+  max-width: none;
+  justify-self: stretch;
+}
+
+@media (max-width: 720px) {
+  .vehicle-add-panel .dashboard-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Create-booking / create-ride forms should use full width */
+.booking-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-lg) var(--spacing-2xl);
+}
+
+.booking-form .form-group {
+  margin-bottom: 0;
+}
+
+.booking-form .rule,
+.booking-form .booking-submit {
+  grid-column: 1 / -1;
+}
+
+.booking-form .rule {
+  margin-top: var(--spacing-md);
+}
+
+@media (max-width: 720px) {
+  .booking-form {
+    grid-template-columns: 1fr;
+  }
+}
 .vehicle-row {
   display: flex;
   justify-content: space-between;
