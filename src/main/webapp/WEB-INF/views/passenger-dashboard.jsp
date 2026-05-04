@@ -49,7 +49,7 @@ if (upcomingRides == null) {
           </div>
 
           <div class="dashboard-actions">
-            <a class="login-submit action-find" href="<%= cp %>/dashboard/passenger?action=showCreateBookingForm" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">Find a Ride</a>
+            <a class="login-submit action-find u-inline-flex-center" href="<%= cp %>/dashboard/passenger?action=showCreateBookingForm">Find a Ride</a>
             <button class="login-submit action-bookings" type="button">My Bookings</button>
           </div>
         </section>
@@ -61,11 +61,11 @@ if (upcomingRides == null) {
           </div>
 
           <% if (upcomingRides.isEmpty()) { %>
-            <div class="dashboard-empty" style="margin-bottom: var(--spacing-2xl);">
+            <div class="dashboard-empty dashboard-empty--spaced">
               <p>No upcoming rides yet.</p>
             </div>
           <% } else { %>
-            <div class="ride-list" style="margin-bottom: var(--spacing-2xl);">
+            <div class="ride-list ride-list--spaced">
               <% for (model.UpcomingRide upcomingRide : upcomingRides) {
                    String rawDeparture = upcomingRide.getDepartureDate();
                    String formattedDeparture = rawDeparture;
@@ -112,9 +112,9 @@ if (upcomingRides == null) {
             <p>Search results will appear here once rides are available for your route.</p>
           </div>
 
-          <div class="dashboard-search-filters" style="display:flex; gap: 0.75rem; flex-wrap: wrap;">
-            <input id="rides-filter-text" type="text" placeholder="Filter by origin, destination, driver, or vehicle" class="dashboard-search" style="flex: 1 1 280px;" />
-            <input id="rides-filter-date" type="date" class="dashboard-search" style="flex: 0 1 220px;" />
+          <div class="dashboard-search-filters">
+            <input id="rides-filter-text" type="text" placeholder="Filter by origin, destination, driver, or vehicle" class="dashboard-search dashboard-search--text" />
+            <input id="rides-filter-date" type="date" class="dashboard-search dashboard-search--date" />
           </div>
 
           <div id="rides-list" class="ride-list">
@@ -130,7 +130,7 @@ if (upcomingRides == null) {
                 <p>No active rides found for your search.</p>
               </div>
             <% } else { %>
-              <div id="no-rides" class="dashboard-empty" style="display:none;">
+              <div id="no-rides" class="dashboard-empty is-hidden">
                 <p>No active rides found for your search.</p>
               </div>
               <% for (model.Ride ride : availableRides) { %>

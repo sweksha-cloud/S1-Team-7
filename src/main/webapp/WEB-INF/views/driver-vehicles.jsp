@@ -29,9 +29,6 @@ if (vehicles == null) {
       <div class="nav-links dashboard-nav-links">
         <span class="dashboard-welcome">Welcome <%= currentUser != null ? currentUser.getFirstName() : "Driver" %></span>
         <a href="<%= cp %>/settings" class="nav-btn-primary dashboard-settings">Settings</a>
-        <% if (canSwapDashboard) { %>
-          <a href="<%= cp %>/dashboard/passenger" class="nav-btn-secondary">Switch to Passenger</a>
-        <% } %>
         <a href="<%= cp %>/dashboard/driver" class="nav-btn-secondary">Back to Dashboard</a>
         <form method="post" action="<%= cp %>/logout" class="dashboard-inline-form">
           <button type="submit" class="nav-btn-secondary dashboard-signout">Sign Out</button>
@@ -45,6 +42,31 @@ if (vehicles == null) {
           <div class="dashboard-section-heading">
             <h3>My Registered Vehicles</h3>
             <p>Add each vehicle once and keep its details current for matching and pickup.</p>
+          </div>
+
+          <div class="vehicle-add">
+            <button
+              type="button"
+              class="vehicle-add-toggle"
+              aria-expanded="false"
+              aria-controls="vehicle-add-panel"
+              onclick="toggleAddVehicle()"
+            >
+              <span class="vehicle-add-title">Add a New Vehicle</span>
+              <span class="vehicle-add-icon" aria-hidden="true">+</span>
+            </button>
+
+            <div id="vehicle-add-panel" class="vehicle-add-panel is-hidden">
+              <form method="post" action="<%= cp %>/dashboard/driver" class="dashboard-form-grid">
+                <input type="hidden" name="action" value="addVehicle" />
+                <input type="text" name="make" class="login-input" placeholder="Vehicle make (e.g. Toyota)" required />
+                <input type="text" name="model" class="login-input" placeholder="Vehicle model (e.g. Camry)" required />
+                <input type="text" name="color" class="login-input" placeholder="Vehicle color" required />
+                <input type="text" name="plate" class="login-input" placeholder="License plate" required />
+                <input type="number" name="totalSeats" class="login-input" placeholder="Total seats" min="1" required />
+                <button class="login-submit dashboard-add-vehicle u-w-100 u-mt-lg" type="submit">Add Vehicle</button>
+              </form>
+            </div>
           </div>
 
           <div class="vehicle-list-container">
@@ -69,7 +91,7 @@ if (vehicles == null) {
                     </div>
                   </div>
 
-                  <div class="vehicle-edit-state" id="edit-form-<%= vehicle.getId() %>" style="display: none;">
+                  <div class="vehicle-edit-state is-hidden" id="edit-form-<%= vehicle.getId() %>">
                     <form method="post" action="<%= cp %>/dashboard/driver" class="vehicle-edit-form">
                       <input type="hidden" name="action" value="updateVehicle" />
                       <input type="hidden" name="vehicleId" value="<%= vehicle.getId() %>" />
@@ -90,35 +112,29 @@ if (vehicles == null) {
               <% } %>
             <% } %>
           </div>
-
-          <div class="vehicle-form-container">
-            <h4 style="margin-bottom: 1rem; color: var(--sjsu-gold);">Add a New Vehicle</h4>
-            <form method="post" action="<%= cp %>/dashboard/driver" class="dashboard-form-grid">
-              <input type="hidden" name="action" value="addVehicle" />
-              <input type="text" name="make" class="login-input" placeholder="Vehicle make (e.g. Toyota)" required />
-              <input type="text" name="model" class="login-input" placeholder="Vehicle model (e.g. Camry)" required />
-              <input type="text" name="color" class="login-input" placeholder="Vehicle color" required />
-              <input type="text" name="plate" class="login-input" placeholder="License plate" required />
-              <input type="number" name="totalSeats" class="login-input" placeholder="Total seats" min="1" required />
-              <button class="login-submit dashboard-add-vehicle" type="submit" style="width: 100%; margin-top: 1rem;">Add Vehicle</button>
-            </form>
-          </div>
         </section>
       </div>
     </div>
   </div>
 
   <script>
+    function toggleAddVehicle() {
+      const toggle = document.querySelector('.vehicle-add-toggle');
+      const panel = document.getElementById('vehicle-add-panel');
+      if (!toggle || !panel) return;
+
+      const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!isExpanded));
+      panel.classList.toggle('is-hidden', isExpanded);
+      const icon = toggle.querySelector('.vehicle-add-icon');
+      if (icon) icon.textContent = isExpanded ? '+' : '–';
+    }
+
     function toggleEditForm(vehicleId) {
       const form = document.getElementById('edit-form-' + vehicleId);
       const row = document.getElementById('vehicle-row-' + vehicleId);
-      if (form.style.display === 'none') {
-        form.style.display = 'block';
-        row.style.display = 'none';
-      } else {
-        form.style.display = 'none';
-        row.style.display = 'block';
-      }
+      form.classList.toggle('is-hidden');
+      row.classList.toggle('is-hidden');
     }
   </script>
 </body>

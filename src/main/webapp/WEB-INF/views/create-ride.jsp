@@ -28,42 +28,40 @@ User currentUser = (User) session.getAttribute("currentUser");
         <div class="dashboard-main">
             <div class="dashboard-main-inner">
                 <section class="dashboard-section">
-                    <div class="settings-quick-card" style="max-width: 600px; margin: 0 auto;">
-                        <div class="dashboard-section-heading">
-                            <h3>Offer a New Ride</h3>
-                            <p>Fill out the details below to share your journey with other SJSU students.</p>
+                    <div class="dashboard-section-heading">
+                        <h3>Offer a New Ride</h3>
+                        <p>Fill out the details below to share your journey with other SJSU students.</p>
+                    </div>
+
+                    <form method="post" action="<%= cp %>/dashboard/driver" class="settings-form booking-form">
+                        <input type="hidden" name="action" value="processCreateRide">
+
+                        <div class="form-group">
+                            <label><strong>Pickup Location (Origin)</strong></label>
+                            <input type="text" name="origin" class="login-input" placeholder="e.g. King Library" required>
                         </div>
 
-                        <form method="post" action="<%= cp %>/dashboard/driver" class="settings-form">
-                            <input type="hidden" name="action" value="processCreateRide">
+                        <div class="form-group">
+                            <label><strong>Drop-off Location (Destination)</strong></label>
+                            <input type="text" name="destination" class="login-input" placeholder="e.g. San Jose Diridon" required>
+                        </div>
 
-                            <div class="form-group">
-                                <label><strong>Pickup Location (Origin)</strong></label>
-                                <input type="text" name="origin" class="login-input" placeholder="e.g. King Library" required>
-                            </div>
+                        <div class="form-group">
+                            <label><strong>Departure Date & Time</strong></label>
+                            <input type="datetime-local" name="departureDate" class="login-input" required>
+                        </div>
 
-                            <div class="form-group">
-                                <label><strong>Drop-off Location (Destination)</strong></label>
-                                <input type="text" name="destination" class="login-input" placeholder="e.g. San Jose Diridon" required>
-                            </div>
+                        <div class="form-group">
+                            <label><strong>Available Seats</strong></label>
+                            <input type="number" name="seatsLeft" class="login-input" min="1" max="10" placeholder="Number of seats" required>
+                        </div>
 
-                            <div class="form-group">
-                                <label><strong>Departure Date & Time</strong></label>
-                                <input type="datetime-local" name="departureDate" class="login-input" required>
-                            </div>
+                        <hr class="rule">
 
-                            <div class="form-group">
-                                <label><strong>Available Seats</strong></label>
-                                <input type="number" name="seatsLeft" class="login-input" min="1" max="10" placeholder="Number of seats" required>
-                            </div>
-
-                            <hr style="border-top: 1px solid var(--border-color); margin: 20px 0;">
-
-                            <button type="submit" class="action-create" style="width: 100%; text-align: center; display: block;">
-                                Post Ride Offer
-                            </button>
-                        </form>
-                    </div>
+                        <button type="submit" class="action-create u-w-100 u-text-center booking-submit">
+                            Post Ride Offer
+                        </button>
+                    </form>
                 </section>
             </div>
         </div>

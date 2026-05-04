@@ -60,7 +60,7 @@ if (currentUser != null) {
               <label>DATE</label>
               <input type="date" />
             </div>
-            <div class="input-group" style="width: 80px;">
+            <div class="input-group input-group--seats">
               <label>SEATS</label>
               <select>
                 <option>1</option>

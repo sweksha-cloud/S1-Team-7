@@ -7,22 +7,28 @@
   --success-color: #10b981;
   --danger-color: #ef4444;
   --warning-color: #f59e0b;
+  --sjsu-blue: #0055a2;
+  --sjsu-gold: #e5a823;
   
   /* Backgrounds */
   --bg-light: #f8fafc;
   --bg-white: #ffffff;
   --bg-gray: #f1f5f9;
   --bg-dark: #050a16;
+  --bg-card: #0e1629;
   
   /* Text */
   --text-primary: #0f172a;
   --text-secondary: #475569;
   --text-light: #9aa4b2;
   --text-white: #ffffff;
+  --text-main: #ffffff;
+  --text-dim: #a1a7b3;
   
   /* Borders */
   --border-light: #e2e8f0;
   --border-gray: #ccc;
+  --border-color: #202b40;
   
   /* Spacing */
   --spacing-xs: 4px;
@@ -103,6 +109,37 @@ a:hover {
 }
 
 /* ==================== UTILITY CLASSES ==================== */
+.u-w-100 { width: 100%; }
+.u-text-center { text-align: center; }
+.u-inline-flex-center {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.is-hidden { display: none !important; }
+.is-block { display: block !important; }
+
+.u-mx-auto { margin-left: auto; margin-right: auto; }
+.u-mt-xs { margin-top: var(--spacing-xs); }
+.u-mt-sm { margin-top: var(--spacing-sm); }
+.u-mt-md { margin-top: var(--spacing-md); }
+.u-mt-lg { margin-top: var(--spacing-lg); }
+.u-mt-xl { margin-top: var(--spacing-xl); }
+.u-mt-2xl { margin-top: var(--spacing-2xl); }
+.u-mb-2xl { margin-bottom: var(--spacing-2xl); }
+
+.card-narrow {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.rule {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: var(--spacing-xl) 0;
+}
+
 .form-group {
   display: grid;
   gap: var(--spacing-sm);
@@ -184,6 +221,17 @@ a:hover {
   font-weight: var(--font-weight-semibold);
   cursor: pointer;
   transition: transform var(--transition-base), box-shadow var(--transition-base), background-color var(--transition-base);
+}
+
+.login-submit,
+.signup-submit {
+  text-decoration: none;
+}
+
+.login-submit.u-inline-flex-center,
+.signup-submit.u-inline-flex-center,
+.btn-primary.u-inline-flex-center {
+  display: inline-flex;
 }
 
 .login-submit:hover,
