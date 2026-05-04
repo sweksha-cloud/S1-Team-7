@@ -6,6 +6,7 @@ import model.User;
 import model.Ride;
 import model.UpcomingRide;
 import model.Vehicle;
+import at.favre.lib.crypto.bcrypt.BCrypt;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,6 +17,21 @@ import java.util.Set;
 public final class AppStore {
 
     private AppStore() {}
+
+    private static final int BCRYPT_COST = 12;
+
+    private static String hashPassword(String password) {
+        if (password == null) throw new IllegalArgumentException("password is required");
+        return BCrypt.withDefaults().hashToString(BCRYPT_COST, password.toCharArray());
+    }
+
+    private static boolean verifyPassword(String password, String storedHashOrPlaintext) {
+        if (password == null || storedHashOrPlaintext == null) return false;
+        BCrypt.Result result = BCrypt.verifyer().verify(password.toCharArray(), storedHashOrPlaintext);
+        if (result.verified) return true;
+        // Backward compatibility for accounts created before hashing existed.
+        return storedHashOrPlaintext.equals(password);
+    }
 
     private static void refreshRideStatuses(Connection c) throws SQLException {
         // Rides in the past should no longer accept bookings.
@@ -63,25 +79,26 @@ public final class AppStore {
 
         String insertUser =
             "INSERT INTO Users (SJSU_ID, First_Name, Last_Name, Email, Gender, " +
-            "                   Password_Hash, Role, Account_Status) " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, 'active')";
+            "                   Password_Hash, Account_Status) " +
+            "VALUES (?, ?, ?, ?, ?, ?, 'active')";
 
-        try (Connection c = DBConnection.get();
-             PreparedStatement ps = c.prepareStatement(insertUser, Statement.RETURN_GENERATED_KEYS)) {
-
-            ps.setString(1, sjsuId);
-            ps.setString(2, firstName);
-            ps.setString(3, lastName);
-            ps.setString(4, email);
-            ps.setString(5, gender);
-            ps.setString(6, password);
-            ps.setString(7, roles.contains("driver") ? "driver" : "passenger");
-            ps.executeUpdate();
+        try (Connection c = DBConnection.get()) {
+            String passwordHash = hashPassword(password);
 
             int userId;
-            try (ResultSet keys = ps.getGeneratedKeys()) {
-                if (!keys.next()) throw new SQLException("No generated key returned");
-                userId = keys.getInt(1);
+            try (PreparedStatement ps = c.prepareStatement(insertUser, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setString(1, sjsuId);
+                ps.setString(2, firstName);
+                ps.setString(3, lastName);
+                ps.setString(4, email);
+                ps.setString(5, gender);
+                ps.setString(6, passwordHash);
+                ps.executeUpdate();
+
+                try (ResultSet keys = ps.getGeneratedKeys()) {
+                    if (!keys.next()) throw new SQLException("No generated key returned");
+                    userId = keys.getInt(1);
+                }
             }
 
             if (roles.contains("driver")) {
@@ -100,7 +117,7 @@ public final class AppStore {
                 }
             }
 
-            return new User(firstName, lastName, email, sjsuId, gender, password, roles);
+            return new User(firstName, lastName, email, sjsuId, gender, passwordHash, roles);
 
         } catch (SQLException e) {
             throw new RuntimeException("createUser failed", e);
@@ -125,7 +142,19 @@ public final class AppStore {
                 if (!rs.next()) return null;
 
                 String storedHash = rs.getString("Password_Hash");
-                if (!storedHash.equals(password)) return null;
+                if (!verifyPassword(password, storedHash)) return null;
+
+                // If this account was stored as plaintext historically, upgrade it now.
+                if (storedHash != null && storedHash.equals(password)) {
+                    try (PreparedStatement upgrade = c.prepareStatement(
+                            "UPDATE Users SET Password_Hash = ? WHERE Email = ? AND Account_Status = 'active'")) {
+                        String upgradedHash = hashPassword(password);
+                        upgrade.setString(1, upgradedHash);
+                        upgrade.setString(2, email);
+                        upgrade.executeUpdate();
+                        storedHash = upgradedHash;
+                    }
+                }
 
                 String firstName    = rs.getString("First_Name");
                 String lastName     = rs.getString("Last_Name");
@@ -160,7 +189,7 @@ public final class AppStore {
         String sql = "UPDATE Users SET Password_Hash = ? WHERE Email = ? AND Account_Status = 'active'";
         try (Connection c = DBConnection.get();
              PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setString(1, newPassword);
+            ps.setString(1, hashPassword(newPassword));
             ps.setString(2, email);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {

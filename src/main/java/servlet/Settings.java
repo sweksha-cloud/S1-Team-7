@@ -7,6 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import at.favre.lib.crypto.bcrypt.BCrypt;
 
 import java.io.IOException;
 
@@ -61,7 +62,10 @@ public class Settings extends HttpServlet {
         String confirmPassword = safe(req.getParameter("confirmPassword"));
 
         // Current password must match the one already stored for the active account.
-        if (!currentPassword.equals(user.getPassword())) {
+        boolean currentVerified = BCrypt.verifyer()
+            .verify(currentPassword.toCharArray(), user.getPassword())
+            .verified;
+        if (!currentVerified) {
             req.setAttribute("errorCurrentPassword", "Current password is incorrect.");
         }
 
@@ -73,7 +77,10 @@ public class Settings extends HttpServlet {
         }
 
         // Reusing the old password would create the illusion of a successful update.
-        if (newPassword.equals(user.getPassword())) {
+        boolean newMatchesOld = BCrypt.verifyer()
+            .verify(newPassword.toCharArray(), user.getPassword())
+            .verified;
+        if (newMatchesOld) {
             req.setAttribute("errorNewPassword", "New password cannot be the same as current password.");
         }
 
