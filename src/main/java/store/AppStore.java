@@ -842,4 +842,143 @@ public final class AppStore {
             throw new RuntimeException("createRide failed", e);
         }
     }
+
+    /** Returns all rides created by this driver, most recent first. */
+    public static java.util.List<Ride> getRidesForDriver(String driverEmail) {
+        String sql =
+            "SELECT r.Ride_ID, r.Origin, r.Destination, r.Departure_Date, r.Seats_Left, r.Status " +
+            "FROM Rides r " +
+            "JOIN Schedules s ON s.Ride_ID = r.Ride_ID " +
+            "JOIN Users u ON u.User_ID = s.User_ID " +
+            "WHERE u.Email = ? AND u.Account_Status = 'active' " +
+            "ORDER BY r.Departure_Date DESC";
+
+        try (Connection c = DBConnection.get();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, driverEmail);
+            java.util.List<Ride> list = new ArrayList<>();
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new Ride(
+                        String.valueOf(rs.getInt("Ride_ID")),
+                        rs.getString("Origin"),
+                        rs.getString("Destination"),
+                        rs.getString("Departure_Date"),
+                        rs.getInt("Seats_Left"),
+                        rs.getString("Status"),
+                        null, null
+                    ));
+                }
+            }
+            return list;
+        } catch (SQLException e) {
+            throw new RuntimeException("getRidesForDriver failed", e);
+        }
+    }
+
+    /**
+     * Cancels a ride and notifies all affected passengers via Notifications + Personalizes.
+     * Returns true on success, false if ride can't be cancelled.
+     */
+    public static boolean cancelRide(String driverEmail, String rideId) {
+        String verifySQL =
+            "SELECT r.Status, r.Origin, r.Destination " +
+            "FROM Rides r " +
+            "JOIN Schedules s ON s.Ride_ID = r.Ride_ID " +
+            "JOIN Users u ON u.User_ID = s.User_ID " +
+            "WHERE r.Ride_ID = ? AND u.Email = ? AND u.Account_Status = 'active' FOR UPDATE";
+
+        String getPassengersSQL =
+            "SELECT u.User_ID " +
+            "FROM Users u " +
+            "JOIN Makes m ON m.User_ID = u.User_ID " +
+            "JOIN Bookings b ON b.Booking_ID = m.Booking_ID " +
+            "JOIN Booking_Ride br ON br.Booking_ID = b.Booking_ID " +
+            "WHERE br.Ride_ID = ? AND b.Status IN ('pending', 'accepted')";
+
+        String cancelBookingsSQL =
+            "UPDATE Bookings b " +
+            "JOIN Booking_Ride br ON br.Booking_ID = b.Booking_ID " +
+            "SET b.Status = 'cancelled' " +
+            "WHERE br.Ride_ID = ? AND b.Status IN ('pending', 'accepted')";
+
+        String cancelRideSQL =
+            "UPDATE Rides SET Status = 'cancelled' WHERE Ride_ID = ?";
+
+        String insertNotifSQL =
+            "INSERT INTO Notifications (Content, Timestamp, Read_Status) VALUES (?, NOW(), 'unread')";
+
+        String insertPersonalizesSQL =
+            "INSERT INTO Personalizes (User_ID, Notification_ID) VALUES (?, ?)";
+
+        try (Connection c = DBConnection.get()) {
+            c.setAutoCommit(false);
+
+            // Verify ride belongs to driver and is cancellable.
+            String rideStatus, origin, destination;
+            try (PreparedStatement ps = c.prepareStatement(verifySQL)) {
+                ps.setInt(1, Integer.parseInt(rideId));
+                ps.setString(2, driverEmail);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (!rs.next()) { c.rollback(); return false; }
+                    rideStatus  = rs.getString("Status");
+                    origin      = rs.getString("Origin");
+                    destination = rs.getString("Destination");
+                }
+            }
+
+            if ("cancelled".equalsIgnoreCase(rideStatus) || "completed".equalsIgnoreCase(rideStatus)) {
+                c.rollback();
+                return false;
+            }
+
+            // Collect affected passenger IDs before cancelling.
+            java.util.List<Integer> passengerIds = new ArrayList<>();
+            try (PreparedStatement ps = c.prepareStatement(getPassengersSQL)) {
+                ps.setInt(1, Integer.parseInt(rideId));
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) passengerIds.add(rs.getInt("User_ID"));
+                }
+            }
+
+            // Cancel all active bookings.
+            try (PreparedStatement ps = c.prepareStatement(cancelBookingsSQL)) {
+                ps.setInt(1, Integer.parseInt(rideId));
+                ps.executeUpdate();
+            }
+
+            // Cancel the ride.
+            try (PreparedStatement ps = c.prepareStatement(cancelRideSQL)) {
+                ps.setInt(1, Integer.parseInt(rideId));
+                ps.executeUpdate();
+            }
+
+            // Notify each affected passenger.
+            if (!passengerIds.isEmpty()) {
+                String message = "Your ride from " + origin + " to " + destination + " has been cancelled by the driver.";
+                try (PreparedStatement psNotif = c.prepareStatement(insertNotifSQL, Statement.RETURN_GENERATED_KEYS);
+                     PreparedStatement psPersonalizes = c.prepareStatement(insertPersonalizesSQL)) {
+                    for (int userId : passengerIds) {
+                        psNotif.setString(1, message);
+                        psNotif.executeUpdate();
+                        int notifId;
+                        try (ResultSet keys = psNotif.getGeneratedKeys()) {
+                            if (!keys.next()) continue;
+                            notifId = keys.getInt(1);
+                        }
+                        psPersonalizes.setInt(1, userId);
+                        psPersonalizes.setInt(2, notifId);
+                        psPersonalizes.executeUpdate();
+                    }
+                }
+            }
+
+            c.commit();
+            return true;
+
+        } catch (SQLException e) {
+            try { throw new RuntimeException("cancelRide failed", e); }
+            finally { }
+        }
+    }
 }
