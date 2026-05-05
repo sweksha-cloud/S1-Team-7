@@ -42,6 +42,11 @@ if (passengerRequests == null) {
         </form>
       </div>
     </nav>
+    <% if (request.getAttribute("error") != null) { %>
+  <p style="color:red; text-align:center; margin-top:10px;">
+    <%= request.getAttribute("error") %>
+  </p>
+<% } %>
 
     <div class="dashboard-main">
       <div class="dashboard-main-inner">
