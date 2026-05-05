@@ -23,13 +23,16 @@ DROP TABLE IF EXISTS `Bookings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Bookings` (
-  `Booking_ID` int NOT NULL,
+  `Booking_ID` int NOT NULL AUTO_INCREMENT,
+  `User_ID` int NOT NULL,
   `Ride_ID` int NOT NULL,
   `Booking_Timestamp` datetime DEFAULT NULL,
   `Status` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`Booking_ID`),
   KEY `fk_bookings_ride` (`Ride_ID`),
-  CONSTRAINT `fk_bookings_ride` FOREIGN KEY (`Ride_ID`) REFERENCES `Rides` (`Ride_ID`)
+  KEY `fk_bookings_user` (`User_ID`),
+  CONSTRAINT `fk_bookings_ride` FOREIGN KEY (`Ride_ID`) REFERENCES `Rides` (`Ride_ID`),
+  CONSTRAINT `fk_bookings_user` FOREIGN KEY (`User_ID`) REFERENCES `Users` (`User_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -83,11 +86,14 @@ DROP TABLE IF EXISTS `Notifications`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Notifications` (
-  `Notification_ID` int NOT NULL,
+  `Notification_ID` int NOT NULL AUTO_INCREMENT,
+  `User_ID` int NOT NULL,
   `Content` text,
   `Timestamp` datetime DEFAULT NULL,
   `Read_Status` varchar(20) DEFAULT NULL,
-  PRIMARY KEY (`Notification_ID`)
+  PRIMARY KEY (`Notification_ID`),
+  KEY `fk_notifications_user` (`User_ID`),
+  CONSTRAINT `fk_notifications_user` FOREIGN KEY (`User_ID`) REFERENCES `Users` (`User_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -114,11 +120,20 @@ DROP TABLE IF EXISTS `Reviews`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Reviews` (
-  `Review_ID` int NOT NULL,
+  `Review_ID` int NOT NULL AUTO_INCREMENT,
+  `Ride_ID` int NOT NULL,
+  `Reviewer_ID` int NOT NULL,
+  `Driver_ID` int NOT NULL,
   `Rating_Stars` int DEFAULT NULL,
   `Comments` text,
   `Review_Date` datetime DEFAULT NULL,
-  PRIMARY KEY (`Review_ID`)
+  PRIMARY KEY (`Review_ID`),
+  KEY `fk_reviews_ride` (`Ride_ID`),
+  KEY `fk_reviews_reviewer` (`Reviewer_ID`),
+  KEY `fk_reviews_driver` (`Driver_ID`),
+  CONSTRAINT `fk_reviews_driver` FOREIGN KEY (`Driver_ID`) REFERENCES `Drivers` (`User_ID`),
+  CONSTRAINT `fk_reviews_reviewer` FOREIGN KEY (`Reviewer_ID`) REFERENCES `Users` (`User_ID`),
+  CONSTRAINT `fk_reviews_ride` FOREIGN KEY (`Ride_ID`) REFERENCES `Rides` (`Ride_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -130,13 +145,19 @@ DROP TABLE IF EXISTS `Rides`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Rides` (
-  `Ride_ID` int NOT NULL,
+  `Ride_ID` int NOT NULL AUTO_INCREMENT,
+  `Driver_ID` int NOT NULL,
+  `Vehicle_ID` int NOT NULL,
   `Origin` varchar(100) DEFAULT NULL,
   `Destination` varchar(100) DEFAULT NULL,
   `Departure_Date` datetime DEFAULT NULL,
   `Seats_Left` int DEFAULT NULL,
   `Status` varchar(20) DEFAULT NULL,
-  PRIMARY KEY (`Ride_ID`)
+  PRIMARY KEY (`Ride_ID`),
+  KEY `fk_rides_driver` (`Driver_ID`),
+  KEY `fk_rides_vehicle` (`Vehicle_ID`),
+  CONSTRAINT `fk_rides_driver` FOREIGN KEY (`Driver_ID`) REFERENCES `Drivers` (`User_ID`),
+  CONSTRAINT `fk_rides_vehicle` FOREIGN KEY (`Vehicle_ID`) REFERENCES `Vehicles` (`Vehicle_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -148,11 +169,14 @@ DROP TABLE IF EXISTS `Saved_Routes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Saved_Routes` (
-  `Route_ID` int NOT NULL,
+  `Route_ID` int NOT NULL AUTO_INCREMENT,
+  `User_ID` int NOT NULL,
   `Start_Location` varchar(100) DEFAULT NULL,
   `End_Location` varchar(100) DEFAULT NULL,
   `Frequency` varchar(20) DEFAULT NULL,
-  PRIMARY KEY (`Route_ID`)
+  PRIMARY KEY (`Route_ID`),
+  UNIQUE KEY `unique_user_route` (`User_ID`,`Start_Location`,`End_Location`),
+  CONSTRAINT `fk_saved_routes_user` FOREIGN KEY (`User_ID`) REFERENCES `Users` (`User_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -171,9 +195,8 @@ CREATE TABLE `Users` (
   `Email` varchar(100) DEFAULT NULL,
   `Gender` varchar(10) DEFAULT NULL,
   `Password_Hash` varchar(255) DEFAULT NULL,
-  `Account_Status` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`User_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -185,14 +208,17 @@ DROP TABLE IF EXISTS `Vehicles`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Vehicles` (
   `Vehicle_ID` int NOT NULL AUTO_INCREMENT,
+  `Driver_ID` int NOT NULL,
   `License_Plate` varchar(20) DEFAULT NULL,
   `Make` varchar(50) DEFAULT NULL,
   `Model` varchar(50) DEFAULT NULL,
   `Color` varchar(20) DEFAULT NULL,
   `Total_Seats` int DEFAULT NULL,
   `Insurance_Num` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`Vehicle_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`Vehicle_ID`),
+  KEY `fk_vehicles_driver` (`Driver_ID`),
+  CONSTRAINT `fk_vehicles_driver` FOREIGN KEY (`Driver_ID`) REFERENCES `Drivers` (`User_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -204,4 +230,4 @@ CREATE TABLE `Vehicles` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-05-04 21:20:45
+-- Dump completed on 2026-05-04 21:56:25
