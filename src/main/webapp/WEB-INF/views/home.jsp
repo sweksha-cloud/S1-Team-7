@@ -49,27 +49,27 @@ if (currentUser != null) {
           <h4 class="card-label">Find a Ride Now</h4>
           <div class="input-group">
             <label>FROM</label>
-            <input type="text" placeholder="Your pickup location" />
+            <input type="text" id="search-origin" placeholder="Your pickup location" />
           </div>
           <div class="input-group">
             <label>TO</label>
-            <input type="text" placeholder="San Jose State University" />
+            <input type="text" id="search-destination" placeholder="San Jose State University" />
           </div>
           <div class="input-row">
             <div class="input-group">
               <label>DATE</label>
-              <input type="date" />
+              <input type="date" id="search-date" />
             </div>
             <div class="input-group input-group--seats">
               <label>SEATS</label>
-              <select>
+              <select id="search-seats">
                 <option>1</option>
                 <option>2</option>
                 <option>3</option>
               </select>
             </div>
           </div>
-          <button class="search-submit" type="button">Search rides -&gt;</button>
+          <button class="search-submit" type="button" onclick="searchRides()">Search rides &rarr;</button>
         </div>
       </div>
     </main>
@@ -113,5 +113,16 @@ if (currentUser != null) {
       </div>
     </footer>
   </div>
+  <script>
+    function searchRides() {
+      var origin      = document.getElementById('search-origin').value.trim();
+      var destination = document.getElementById('search-destination').value.trim();
+      var date        = document.getElementById('search-date').value;
+      var url = '<%= cp %>/dashboard/passenger?searchOrigin=' + encodeURIComponent(origin)
+              + '&searchDestination=' + encodeURIComponent(destination)
+              + '&searchDate=' + encodeURIComponent(date);
+      window.location.href = url;
+    }
+  </script>
 </body>
 </html>

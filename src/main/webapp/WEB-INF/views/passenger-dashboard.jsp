@@ -173,7 +173,14 @@ if (upcomingRides == null) {
             <% } %>
           </div>
 
+
           <script>
+            // Pre-fill filters from home page search
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('searchDestination')) document.getElementById('rides-filter-text').value = params.get('searchDestination');
+            else if (params.get('searchOrigin')) document.getElementById('rides-filter-text').value = params.get('searchOrigin');
+            if (params.get('searchDate')) document.getElementById('rides-filter-date').value = params.get('searchDate');
+
             (function() {
               const textInput = document.getElementById('rides-filter-text');
               const dateInput = document.getElementById('rides-filter-date');
