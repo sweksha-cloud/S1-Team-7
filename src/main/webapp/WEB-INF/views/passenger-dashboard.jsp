@@ -235,7 +235,19 @@ if (upcomingRides == null) {
                       <% if (!formattedTime.isBlank()) { %>
                         <small class="ride-meta">Time: <%= formattedTime %></small>
                       <% } %>
-                      <small class="ride-meta">Seats left: <%= ride.getSeatsLeft() %></small>
+                     <% if (ride.getSeatsLeft() == 0) { %>
+                      <small class="ride-meta" style="color:red;">
+                        Full
+                      </small>
+                    <% } else if (ride.getSeatsLeft() <= 2) { %>
+                      <small class="ride-meta" style="color:orange;">
+                        Few seats left: <%= ride.getSeatsLeft() %>
+                      </small>
+                    <% } else { %>
+                      <small class="ride-meta" style="color:green;">
+                        Seats left: <%= ride.getSeatsLeft() %>
+                      </small>
+                    <% } %>
                     </div>
                     <div class="ride-actions">
                       <form method="post" action="<%= cp %>/dashboard/passenger" class="dashboard-inline-form">
