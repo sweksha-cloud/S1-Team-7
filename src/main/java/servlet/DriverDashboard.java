@@ -51,6 +51,7 @@ public class DriverDashboard extends HttpServlet {
         }
 
         req.setAttribute("passengerRequests", AppStore.getPassengerRequestsForDriver(user.getEmail()));
+        req.setAttribute("driverRides", AppStore.getRidesForDriver(user.getEmail()));
         req.getRequestDispatcher("/WEB-INF/views/driver-dashboard.jsp").forward(req, resp);
     }
 
@@ -162,6 +163,13 @@ public class DriverDashboard extends HttpServlet {
         if ("addVehicle".equals(action) || "updateVehicle".equals(action) || "deleteVehicle".equals(action)) {
             resp.sendRedirect(req.getContextPath() + "/dashboard/driver?action=showVehicles");
             return;
+        }
+
+        if ("cancelRide".equals(action)) {
+            String rideId = safe(req.getParameter("rideId"));
+            if (!rideId.isBlank()) {
+                AppStore.cancelRide(user.getEmail(), rideId);
+            }
         }
 
         resp.sendRedirect(req.getContextPath() + "/dashboard/driver");

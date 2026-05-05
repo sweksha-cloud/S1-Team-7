@@ -87,6 +87,60 @@ if (passengerRequests == null) {
 
           <section class="dashboard-section dashboard-vehicle-card">
             <div class="dashboard-section-heading">
+              <h3>My Rides</h3>
+              <p>All rides you have created. Cancel a ride to remove all passengers and notify them.</p>
+            </div>
+
+            <%
+              java.util.List<model.Ride> driverRides = (java.util.List<model.Ride>) request.getAttribute("driverRides");
+              if (driverRides == null) driverRides = java.util.Collections.emptyList();
+            %>
+
+            <% if (driverRides.isEmpty()) { %>
+              <div class="dashboard-empty">
+                <p>You haven't created any rides yet.</p>
+              </div>
+            <% } else { %>
+              <div class="ride-list">
+                <% for (model.Ride ride : driverRides) {
+                     String rawDep = ride.getDepartureDate();
+                     String fmtDep = rawDep;
+                     String fmtTime = "";
+                     try {
+                       java.time.LocalDateTime dt = java.time.LocalDateTime.parse(rawDep,
+                           java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                       fmtDep  = dt.format(java.time.format.DateTimeFormatter.ofPattern("MMMM d, yyyy"));
+                       fmtTime = dt.format(java.time.format.DateTimeFormatter.ofPattern("h:mm a"));
+                     } catch (Exception ignored) {}
+                %>
+                  <div class="ride-item">
+                    <div class="ride-row">
+                      <div class="ride-info">
+                        <strong><%= ride.getOrigin() %> &rarr; <%= ride.getDestination() %></strong>
+                        <small class="ride-meta">Date: <%= fmtDep %> <%= fmtTime %></small>
+                        <small class="ride-meta">Seats left: <%= ride.getSeatsLeft() %></small>
+                        <small class="ride-meta">Status: <%= ride.getStatus() %></small>
+                      </div>
+                      <% if (!"cancelled".equalsIgnoreCase(ride.getStatus()) && !"completed".equalsIgnoreCase(ride.getStatus())) { %>
+                        <div class="ride-actions">
+                          <form method="post" action="<%= cp %>/dashboard/driver"
+                                class="dashboard-inline-form"
+                                onsubmit="return confirm('Cancel this ride? All passengers will be notified.');">
+                            <input type="hidden" name="action"  value="cancelRide" />
+                            <input type="hidden" name="rideId"  value="<%= ride.getId() %>" />
+                            <button type="submit" class="request-decline">Cancel Ride</button>
+                          </form>
+                        </div>
+                      <% } %>
+                    </div>
+                  </div>
+                <% } %>
+              </div>
+            <% } %>
+          </section>
+
+          <section class="dashboard-section dashboard-vehicle-card">
+            <div class="dashboard-section-heading">
               <h3>Passenger Requests</h3>
               <p>Incoming requests appear here so you can review them directly from your dashboard.</p>
             </div>
