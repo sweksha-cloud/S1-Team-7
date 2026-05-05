@@ -39,6 +39,41 @@ if (upcomingRides == null) {
     <div class="dashboard-main">
       <div class="dashboard-main-inner">
 
+        <%
+  java.util.List<String[]> notifications = (java.util.List<String[]>) request.getAttribute("notifications");
+  if (notifications == null) notifications = java.util.Collections.emptyList();
+  long unreadCount = notifications.stream().filter(n -> "unread".equals(n[3])).count();
+%>
+
+<% if (!notifications.isEmpty()) { %>
+  <section class="dashboard-section dashboard-passenger-section">
+    <div class="dashboard-section-heading">
+      <h3>Notifications <% if (unreadCount > 0) { %><span class="notif-badge"><%= unreadCount %></span><% } %></h3>
+    </div>
+    <div class="ride-list">
+      <% for (String[] notif : notifications) {
+           boolean isUnread = "unread".equals(notif[3]);
+      %>
+        <div class="ride-item <%= isUnread ? "notif-unread" : "" %>">
+          <div class="ride-row">
+            <div class="ride-info">
+              <small class="ride-meta"><%= notif[1] %></small>
+              <small class="ride-meta"><%= notif[2] %></small>
+            </div>
+            <% if (isUnread) { %>
+              <form method="post" action="<%= cp %>/dashboard/passenger" class="dashboard-inline-form">
+                <input type="hidden" name="action" value="markNotifRead" />
+                <input type="hidden" name="notifId" value="<%= notif[0] %>" />
+                <button type="submit" class="request-approve">Mark Read</button>
+              </form>
+            <% } %>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </section>
+<% } %>
+
         <section class="dashboard-hero dashboard-section">
           <div class="dashboard-hero-copy">
             <span class="campus-tag">Passenger Hub</span>

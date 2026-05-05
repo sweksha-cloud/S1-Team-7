@@ -1004,4 +1004,46 @@ public final class AppStore {
             finally { }
         }
     }
+
+    /** Returns all notifications for a user, most recent first. */
+    public static java.util.List<String[]> getNotificationsForUser(String email) {
+        String sql =
+            "SELECT n.Notification_ID, n.Content, n.Timestamp, n.Read_Status " +
+            "FROM Notifications n " +
+            "JOIN Personalizes p ON p.Notification_ID = n.Notification_ID " +
+            "JOIN Users u ON u.User_ID = p.User_ID " +
+            "WHERE u.Email = ? AND u.Account_Status = 'active' " +
+            "ORDER BY n.Timestamp DESC";
+
+        try (Connection c = DBConnection.get();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, email);
+            java.util.List<String[]> list = new ArrayList<>();
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new String[]{
+                        rs.getString("Notification_ID"),
+                        rs.getString("Content"),
+                        rs.getString("Timestamp"),
+                        rs.getString("Read_Status")
+                    });
+                }
+            }
+            return list;
+        } catch (SQLException e) {
+            throw new RuntimeException("getNotificationsForUser failed", e);
+        }
+    }
+
+    /** Marks a notification as read. */
+    public static void markNotificationRead(String notificationId) {
+        String sql = "UPDATE Notifications SET Read_Status = 'read' WHERE Notification_ID = ?";
+        try (Connection c = DBConnection.get();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, Integer.parseInt(notificationId));
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("markNotificationRead failed", e);
+        }
+    }
 }

@@ -44,6 +44,7 @@ public class PassengerDashboard extends HttpServlet {
 
         // Load available rides for display
         req.setAttribute("availableRides", store.AppStore.getAvailableRides());
+        req.setAttribute("notifications", AppStore.getNotificationsForUser(user.getEmail()));
         req.setAttribute("upcomingRides", AppStore.getUpcomingRidesForPassenger(user.getEmail()));
 
         req.getRequestDispatcher("/WEB-INF/views/passenger-dashboard.jsp").forward(req, resp);
@@ -89,6 +90,13 @@ public class PassengerDashboard extends HttpServlet {
             String bookingId = safe(req.getParameter("bookingId"));
             if (!bookingId.isBlank()) {
                 AppStore.cancelUpcomingRideForPassenger(user.getEmail(), bookingId);
+            }
+        }
+
+        if ("markNotifRead".equals(action)) {
+            String notifId = safe(req.getParameter("notifId"));
+            if (!notifId.isBlank()) {
+                AppStore.markNotificationRead(notifId);
             }
         }
 
