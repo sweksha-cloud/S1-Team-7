@@ -173,6 +173,7 @@ if (upcomingRides == null) {
                   <div class="ride-row">
                     <div class="ride-info">
                       <strong><%= ride.getOrigin() %> → <%= ride.getDestination() %></strong><br />
+                      <small class="ride-meta">Status: <%= ride.getStatus() %></small>
                       <%
                         String rawDeparture = ride.getDepartureDate();
                         String formattedDeparture = rawDeparture;
