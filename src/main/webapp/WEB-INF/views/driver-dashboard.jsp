@@ -124,19 +124,26 @@ if (passengerRequests == null) {
                         <strong><%= ride.getOrigin() %> &rarr; <%= ride.getDestination() %></strong>
                         <small class="ride-meta">Date: <%= fmtDep %> <%= fmtTime %></small>
                         <small class="ride-meta">Seats left: <%= ride.getSeatsLeft() %></small>
-                        <small class="ride-meta">Status: <%= ride.getStatus() %></small>
-                      </div>
-                      <% if (!"cancelled".equalsIgnoreCase(ride.getStatus()) && !"completed".equalsIgnoreCase(ride.getStatus())) { %>
-                        <div class="ride-actions">
-                          <form method="post" action="<%= cp %>/dashboard/driver"
-                                class="dashboard-inline-form"
-                                onsubmit="return confirm('Cancel this ride? All passengers will be notified.');">
-                            <input type="hidden" name="action"  value="cancelRide" />
-                            <input type="hidden" name="rideId"  value="<%= ride.getId() %>" />
-                            <button type="submit" class="request-decline">Cancel Ride</button>
-                          </form>
-                        </div>
+                        <% if ("completed".equalsIgnoreCase(ride.getStatus())) { %>
+                        <small class="ride-meta">Status: Completed</small>
+                      <% } else if ("cancelled".equalsIgnoreCase(ride.getStatus())) { %>
+                        <small class="ride-meta">Status: Cancelled</small>
+                      <% } else { %>
+                        <small class="ride-meta">Status: Active</small>
                       <% } %>
+                      </div>
+                      <% if (!"completed".equalsIgnoreCase(ride.getStatus()) &&
+                        !"cancelled".equalsIgnoreCase(ride.getStatus())) { %>
+                    <div class="ride-actions">
+                      <form method="post" action="<%= cp %>/dashboard/driver"
+                            class="dashboard-inline-form"
+                            onsubmit="return confirm('Cancel this ride? All passengers will be notified.');">
+                        <input type="hidden" name="action"  value="cancelRide" />
+                        <input type="hidden" name="rideId"  value="<%= ride.getId() %>" />
+                        <button type="submit" class="request-decline">Cancel Ride</button>
+                      </form>
+                    </div>
+                  <% } %>
                     </div>
                   </div>
                 <% } %>
