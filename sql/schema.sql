@@ -58,11 +58,19 @@ DROP TABLE IF EXISTS `Logs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Logs` (
-  `Log_ID` int NOT NULL,
-  `Event_Type` varchar(50) DEFAULT NULL,
-  `Event_Timestamp` datetime DEFAULT NULL,
-  `Details` text,
-  PRIMARY KEY (`Log_ID`)
+  `Log_ID` int NOT NULL AUTO_INCREMENT,
+  `User_ID` int DEFAULT NULL,
+  `Ride_ID` int DEFAULT NULL,
+  `Action_Type` enum('LOGIN','LOGOUT','PASSWORD_CHANGE','BOOKING_CREATED','BOOKING_CANCELLED','ACCOUNT_CREATED','ACCOUNT_DELETED','RIDE_CREATED','RIDE_CANCELLED') NOT NULL,
+  `Log_Timestamp` datetime DEFAULT CURRENT_TIMESTAMP,
+  `Description` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`Log_ID`),
+  KEY `User_ID` (`User_ID`),
+  KEY `Ride_ID` (`Ride_ID`),
+  KEY `Booking_ID` (`Booking_ID`),
+  CONSTRAINT `logs_ibfk_1` FOREIGN KEY (`User_ID`) REFERENCES `Users` (`User_ID`),
+  CONSTRAINT `logs_ibfk_2` FOREIGN KEY (`Ride_ID`) REFERENCES `Rides` (`Ride_ID`),
+  CONSTRAINT `logs_ibfk_3` FOREIGN KEY (`Booking_ID`) REFERENCES `Bookings` (`Booking_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -195,4 +203,4 @@ CREATE TABLE `Vehicles` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-05-04 21:06:22
+-- Dump completed on 2026-05-04 21:20:45
