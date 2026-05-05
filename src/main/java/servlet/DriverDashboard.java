@@ -1,14 +1,15 @@
 package servlet;
 
-import model.User;
-import store.AppStore;
+import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.io.IOException;
+import model.User;
+import store.AppStore;
 
 /**
  * Driver dashboard for viewing and managing the current user's vehicles.
@@ -34,6 +35,14 @@ public class DriverDashboard extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/login");
             return;
         }
+        String status = AppStore.getDriverVerificationStatus(user.getEmail());
+
+        if (status == null || !status.equalsIgnoreCase("verified")) {
+        req.setAttribute("error", "Your driver account is pending verification.");
+        req.getRequestDispatcher("/WEB-INF/views/driver-dashboard.jsp").forward(req, resp);
+        return;
+        }
+        
 
         String action = safe(req.getParameter("action"));
 

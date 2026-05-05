@@ -141,6 +141,47 @@ if (upcomingRides == null) {
               <% } %>
             </div>
           <% } %>
+          </section>
+
+<!-- ✅ Ride History Section -->
+<section class="dashboard-section dashboard-passenger-section">
+  <div class="dashboard-section-heading">
+    <h3>Ride History</h3>
+    <p>Your past rides (completed or cancelled).</p>
+  </div>
+
+  <%
+    java.util.List<model.UpcomingRide> pastRides = new java.util.ArrayList<>();
+
+    for (model.UpcomingRide r : upcomingRides) {
+      if ("completed".equalsIgnoreCase(r.getBookingStatus()) ||
+          "cancelled".equalsIgnoreCase(r.getBookingStatus())) {
+        pastRides.add(r);
+      }
+    }
+  %>
+
+  <% if (pastRides.isEmpty()) { %>
+    <div class="dashboard-empty">
+      <p>No past rides yet.</p>
+    </div>
+  <% } else { %>
+    <div class="ride-list">
+      <% for (model.UpcomingRide ride : pastRides) { %>
+        <div class="ride-item">
+          <div class="ride-row">
+            <div class="ride-info">
+              <strong><%= ride.getOrigin() %> → <%= ride.getDestination() %></strong><br />
+              <small class="ride-meta">Status: <%= ride.getBookingStatus() %></small>
+              <small class="ride-meta">Driver: <%= ride.getDriverName() %></small>
+              <small class="ride-meta">Vehicle: <%= ride.getVehicleInfo() %></small>
+            </div>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  <% } %>
+</section>
 
           <div class="dashboard-section-heading">
             <h3>Available Rides</h3>
@@ -173,6 +214,7 @@ if (upcomingRides == null) {
                   <div class="ride-row">
                     <div class="ride-info">
                       <strong><%= ride.getOrigin() %> → <%= ride.getDestination() %></strong><br />
+                      <small class="ride-meta">Status: <%= ride.getStatus() %></small>
                       <%
                         String rawDeparture = ride.getDepartureDate();
                         String formattedDeparture = rawDeparture;
