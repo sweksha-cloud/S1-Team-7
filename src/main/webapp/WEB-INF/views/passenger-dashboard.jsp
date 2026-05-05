@@ -253,7 +253,13 @@ if (upcomingRides == null) {
                       <form method="post" action="<%= cp %>/dashboard/passenger" class="dashboard-inline-form">
                         <input type="hidden" name="action" value="processRideRequest" />
                         <input type="hidden" name="rideId" value="<%= ride.getId() %>" />
-                        <button type="submit" class="request-approve">Request</button>
+                        <% if ("completed".equalsIgnoreCase(ride.getStatus()) ||
+                          "cancelled".equalsIgnoreCase(ride.getStatus()) ||
+                          ride.getSeatsLeft() == 0) { %>
+                      <span class="ride-meta">Unavailable</span>
+                    <% } else { %>
+                      <button type="submit" class="request-approve">Request</button>
+                    <% } %>
                       </form>
                     </div>
                   </div>
