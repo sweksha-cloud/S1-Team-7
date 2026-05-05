@@ -69,11 +69,12 @@ public class Settings extends HttpServlet {
             req.setAttribute("errorCurrentPassword", "Current password is incorrect.");
         }
 
-        // Apply the minimum password policy before attempting the database update.
+        // Apply the password policy before attempting the database update.
         if (newPassword.isBlank()) {
             req.setAttribute("errorNewPassword", "New password is required.");
-        } else if (newPassword.length() < 8) {
-            req.setAttribute("errorNewPassword", "Password must be at least 8 characters.");
+        } else if (!AppStore.isStrongPassword(newPassword)) {
+            req.setAttribute("errorNewPassword",
+                "Password must be at least 8 characters and include 1 uppercase letter, 1 lowercase letter, and 1 number.");
         }
 
         // Reusing the old password would create the illusion of a successful update.
