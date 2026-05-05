@@ -191,6 +191,8 @@ if (upcomingRides == null) {
           <div class="dashboard-search-filters">
             <input id="rides-filter-text" type="text" placeholder="Filter by origin, destination, driver, or vehicle" class="dashboard-search dashboard-search--text" />
             <input id="rides-filter-date" type="date" class="dashboard-search dashboard-search--date" />
+            <input id="rides-filter-hours" type="number" placeholder="Hours until departure" class="dashboard-search" min="0" />
+          
           </div>
 
           <div id="rides-list" class="ride-list">
@@ -279,10 +281,12 @@ if (upcomingRides == null) {
             (function() {
               const textInput = document.getElementById('rides-filter-text');
               const dateInput = document.getElementById('rides-filter-date');
+              const hoursInput = document.getElementById('rides-filter-hours');
               const list = document.getElementById('rides-list');
               const noRides = document.getElementById('no-rides');
 
               function filter() {
+                const hoursQuery = hoursInput.value.trim();
                 const textQuery = textInput.value.trim().toLowerCase();
                 const dateQuery = dateInput.value.trim();
                 const items = list.querySelectorAll('.ride-item');
@@ -294,9 +298,18 @@ if (upcomingRides == null) {
                   const vehicle = item.dataset.vehicle || '';
                   const departure = item.dataset.departure || '';
                   const departureDate = departure.split(' ')[0] || '';
+                  let hoursMatches = true;
+
+                  if (hoursQuery) {
+                    const now = new Date();
+                    const rideTime = new Date(departure.replace(' ', 'T'));
+                    const diffHours = (rideTime - now) / (1000 * 60 * 60);
+
+                    hoursMatches = diffHours >= 0 && diffHours <= parseFloat(hoursQuery);
+                  }
                   const textMatches = !textQuery || origin.includes(textQuery) || destination.includes(textQuery) || driver.includes(textQuery) || vehicle.includes(textQuery);
                   const dateMatches = !dateQuery || departureDate === dateQuery;
-                  if (textMatches && dateMatches) {
+                  if (textMatches && dateMatches && hoursMatches) {
                     item.style.display = '';
                     visible++;
                   } else {
@@ -308,6 +321,7 @@ if (upcomingRides == null) {
 
               textInput.addEventListener('input', filter);
               dateInput.addEventListener('input', filter);
+              hoursInput.addEventListener('input', filter);
             })();
           </script>
 
