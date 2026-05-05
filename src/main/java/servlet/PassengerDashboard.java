@@ -1,14 +1,18 @@
 package servlet;
 
-import model.User;
-import store.AppStore;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.io.IOException;
+import model.Ride;
+import model.User;
+import store.AppStore;
 
 /**
  * Passenger dashboard page for authenticated non-driver users.
@@ -43,7 +47,36 @@ public class PassengerDashboard extends HttpServlet {
         }
 
         // Load available rides for display
-        req.setAttribute("availableRides", store.AppStore.getAvailableRides());
+        String destinationFilter = safe(req.getParameter("destination")).toLowerCase();
+String departureFilter = safe(req.getParameter("departureTime"));
+
+List<Ride> rides = AppStore.getAvailableRides();
+List<Ride> filteredRides = new ArrayList<>();
+
+for (Ride ride : rides) {
+    boolean matches = true;
+
+    // Filter by destination
+    if (!destinationFilter.isBlank() &&
+        !ride.getDestination().toLowerCase().contains(destinationFilter)) {
+        matches = false;
+    }
+
+    // Filter by departure time
+    if (!departureFilter.isBlank()) {
+        String formattedInput = departureFilter.replace("T", " ");
+        if (!ride.getDepartureDate().contains(formattedInput)) {
+            matches = false;
+        }
+    }
+
+    if (matches) {
+        filteredRides.add(ride);
+    }
+}
+
+// Send filtered rides instead of all rides
+req.setAttribute("availableRides", filteredRides);
         req.setAttribute("notifications", AppStore.getNotificationsForUser(user.getEmail()));
         req.setAttribute("upcomingRides", AppStore.getUpcomingRidesForPassenger(user.getEmail()));
 

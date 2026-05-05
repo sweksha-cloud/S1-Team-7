@@ -8,7 +8,7 @@ import java.sql.SQLException;
  * Opens a JDBC connection to the team7 MySQL database.
  *
  * Set these three environment variables before starting Tomcat:
- *   DB_URL      e.g.  jdbc:mysql://localhost:3306/team7
+ *   DB_URL      e.g.  jdbc:mysql://locmalhost:3306/team7
  *   DB_USER     e.g.  root
  *   DB_PASSWORD e.g.  yourpassword
  *
