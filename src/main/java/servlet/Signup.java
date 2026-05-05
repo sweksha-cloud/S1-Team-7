@@ -78,8 +78,9 @@ public class Signup extends HttpServlet {
 
         if (password.isBlank()) {
             req.setAttribute("errorPassword", "Password is required.");
-        } else if (password.length() < 8) {
-            req.setAttribute("errorPassword", "Password must be at least 8 characters.");
+        } else if (!AppStore.isStrongPassword(password)) {
+            req.setAttribute("errorPassword",
+                "Password must be at least 8 characters and include 1 uppercase letter, 1 lowercase letter, and 1 number.");
         }
 
         Set<String> roles = new HashSet<>();

@@ -20,6 +20,27 @@ public final class AppStore {
 
     private static final int BCRYPT_COST = 12;
 
+    /**
+     * Enforces the application's password policy.
+     * Passwords must be at least 8 characters and include at least one
+     * uppercase letter, one lowercase letter, and one digit.
+     *
+     * @param password candidate password
+     * @return true when the password meets the policy
+     */
+    public static boolean isStrongPassword(String password) {
+        if (password == null) return false;
+        if (password.length() < 8) return false;
+        boolean hasUpper = false, hasLower = false, hasDigit = false;
+        for (int i = 0; i < password.length(); i++) {
+            char c = password.charAt(i);
+            if (Character.isUpperCase(c)) hasUpper = true;
+            if (Character.isLowerCase(c)) hasLower = true;
+            if (Character.isDigit(c)) hasDigit = true;
+            if (hasUpper && hasLower && hasDigit) return true;
+        }
+        return false;
+    }
     private static String hashPassword(String password) {
         if (password == null) throw new IllegalArgumentException("password is required");
         return BCrypt.withDefaults().hashToString(BCRYPT_COST, password.toCharArray());
@@ -76,6 +97,7 @@ public final class AppStore {
             String licenseNumber) {
 
         if (hasUser(email)) return null;
+        if (!isStrongPassword(password)) throw new IllegalArgumentException("password does not meet policy");
 
         String insertUser =
             "INSERT INTO Users (SJSU_ID, First_Name, Last_Name, Email, Gender, " +
@@ -186,6 +208,7 @@ public final class AppStore {
     }
 
     public static boolean updatePassword(String email, String newPassword) {
+        if (!isStrongPassword(newPassword)) return false;
         String sql = "UPDATE Users SET Password_Hash = ? WHERE Email = ? AND Account_Status = 'active'";
         try (Connection c = DBConnection.get();
              PreparedStatement ps = c.prepareStatement(sql)) {
