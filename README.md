@@ -1,5 +1,11 @@
 # UniRide
 
+## Live Application
+
+UniRide is deployed and available at:
+
+[Open UniRide](https://uniride-hkid.onrender.com/home)
+
 ## Overview
 
 Carpooling system database and web app built around a MySQL schema, with a Tomcat deployment path for local testing. The system supports:
